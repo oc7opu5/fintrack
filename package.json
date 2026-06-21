@@ -13,10 +13,19 @@
     "db:migrate:prod": "prisma migrate deploy",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset --force && npm run db:seed"
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "mobile:add": "capacitor add",
+    "mobile:android": "capacitor open android",
+    "mobile:ios": "capacitor open ios",
+    "mobile:sync": "capacitor sync",
+    "mobile:build": "npm run build && capacitor sync"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
     "@prisma/client": "^6.19.3",
     "@tanstack/react-query": "^5.101.0",
     "@trpc/client": "^11.18.0",

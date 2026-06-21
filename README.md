@@ -107,6 +107,37 @@ fintrack/
 └── docker-compose.yml # Full stack setup
 ```
 
+## Mobile App (Capacitor)
+
+FinTrack uses Capacitor to build native iOS and Android apps from the web app.
+
+### Prerequisites
+- Android Studio (for Android)
+- Xcode (for macOS, for iOS)
+
+### Build Mobile App
+
+1. Build the web app:
+   ```bash
+   npm run build
+   ```
+
+2. Sync with Capacitor:
+   ```bash
+   npx cap sync
+   ```
+
+3. Open in IDE:
+   ```bash
+   # Android
+   npx cap open android
+
+   # iOS (macOS only)
+   npx cap open ios
+   ```
+
+4. Build and run from the IDE.
+
 ## API Routes
 
 - `/api/auth/*` - NextAuth.js authentication
