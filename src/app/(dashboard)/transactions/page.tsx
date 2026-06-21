@@ -21,13 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default function TransactionsPage() {
   const [chatInput, setChatInput] = useState("");
+  const [parseResult, setParseResult] = useState<any>(null);
   const [isManualDialogOpen, setIsManualDialogOpen] = useState(false);
   const [manualTransaction, setManualTransaction] = useState({
     accountId: "",
@@ -41,6 +41,7 @@ export default function TransactionsPage() {
 
   const utils = trpc.useUtils();
   const { data: accounts } = trpc.account.list.useQuery();
+  const { data: categories } = trpc.category.list.useQuery();
   const { data: transactionsData, isLoading } = trpc.transaction.list.useQuery({
     page: 1,
     limit: 50,
@@ -50,6 +51,8 @@ export default function TransactionsPage() {
     onSuccess: () => {
       utils.transaction.list.invalidate();
       setIsManualDialogOpen(false);
+      setChatInput("");
+      setParseResult(null);
       setManualTransaction({
         accountId: "",
         categoryId: "",
@@ -62,46 +65,39 @@ export default function TransactionsPage() {
     },
   });
 
+  const parseMutation = trpc.ai.parse.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.transaction) {
+        setParseResult(result);
+      }
+    },
+  });
+
   const handleChatSubmit = () => {
     if (!chatInput.trim()) return;
+    parseMutation.mutate({ input: chatInput });
+  };
 
-    // Parse simple patterns like "spent 500 on lunch" or "earned 5000 salary"
-    const spentMatch = chatInput.match(/spent\s+(\d+)\s+(?:on\s+)?(.+)/i);
-    const earnedMatch = chatInput.match(/earned\s+(\d+)\s+(.+)?/i);
-    const receivedMatch = chatInput.match(/received\s+(\d+)\s+(.+)?/i);
+  const handleAcceptParsed = () => {
+    if (!parseResult?.transaction || !accounts?.length) return;
 
-    if (spentMatch) {
-      const amount = parseInt(spentMatch[1]);
-      const description = spentMatch[2];
-      const defaultAccount = accounts?.find((a) => a.isDefault) || accounts?.[0];
+    const txn = parseResult.transaction;
+    const account = accounts.find(
+      (a) => a.name.toLowerCase().includes(txn.account?.toLowerCase() || "") || a.isDefault
+    ) || accounts[0];
 
-      if (defaultAccount) {
-        createTransaction.mutate({
-          accountId: defaultAccount.id,
-          type: "EXPENSE",
-          amount,
-          description,
-          date: new Date(),
-        });
-        setChatInput("");
-      }
-    } else if (earnedMatch || receivedMatch) {
-      const match = earnedMatch || receivedMatch;
-      const amount = parseInt(match![1]);
-      const description = match![2] || "Income";
-      const defaultAccount = accounts?.find((a) => a.isDefault) || accounts?.[0];
+    const category = categories?.find(
+      (c) => c.name.toLowerCase().includes(txn.category?.toLowerCase() || "")
+    );
 
-      if (defaultAccount) {
-        createTransaction.mutate({
-          accountId: defaultAccount.id,
-          type: "INCOME",
-          amount,
-          description,
-          date: new Date(),
-        });
-        setChatInput("");
-      }
-    }
+    createTransaction.mutate({
+      accountId: account.id,
+      categoryId: category?.id,
+      type: txn.type,
+      amount: txn.amount,
+      description: txn.description,
+      date: new Date(txn.date),
+    });
   };
 
   const handleManualSubmit = () => {
@@ -121,37 +117,106 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      {/* Chat Input */}
+      {/* AI Chat Input */}
       <Card className="border-primary/20">
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-2">
-            <Send className="w-4 h-4 text-primary" />
-            <p className="text-sm font-medium">Quick Entry</p>
+            <Sparkles className="w-4 h-4 text-primary" />
+            <p className="text-sm font-medium">AI-Powered Quick Entry</p>
           </div>
           <div className="flex gap-2">
             <Input
-              placeholder='Type something like "spent 500 on lunch" or "earned 5000 salary"'
+              placeholder='Try: "spent 500 on lunch via bKash" or "earned 50000 salary"'
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Enter" && !parseResult) {
                   handleChatSubmit();
                 }
               }}
               className="flex-1"
+              disabled={parseMutation.isPending}
             />
             <Button
               onClick={handleChatSubmit}
-              disabled={!chatInput.trim() || createTransaction.isPending}
+              disabled={!chatInput.trim() || parseMutation.isPending}
             >
-              <Send className="w-4 h-4" />
+              {parseMutation.isPending ? (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Try: &quot;spent 200 on groceries&quot;, &quot;earned 50000 salary&quot;, &quot;received 1000 refund&quot;
+            AI will parse your input and suggest a transaction. You can edit before saving.
           </p>
         </CardContent>
       </Card>
+
+      {/* Parsed Transaction Preview */}
+      {parseResult?.success && parseResult.transaction && (
+        <Card className="border-emerald-500/50 bg-emerald-500/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-500" />
+                <p className="text-sm font-medium text-emerald-500">AI Parsed Transaction</p>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {Math.round(parseResult.transaction.confidence * 100)}% confidence
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Type</p>
+                <p className={`font-medium ${parseResult.transaction.type === "INCOME" ? "text-emerald-500" : "text-rose-500"}`}>
+                  {parseResult.transaction.type}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Amount</p>
+                <p className="font-medium">{formatCurrency(parseResult.transaction.amount)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Description</p>
+                <p className="font-medium">{parseResult.transaction.description}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Category</p>
+                <p className="font-medium">{parseResult.transaction.category || "Other"}</p>
+              </div>
+            </div>
+
+            {parseResult.transaction.account && (
+              <div className="mb-4">
+                <p className="text-xs text-muted-foreground">Account</p>
+                <p className="font-medium">{parseResult.transaction.account}</p>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button onClick={handleAcceptParsed} disabled={createTransaction.isPending}>
+                {createTransaction.isPending ? "Adding..." : "Accept & Add"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setParseResult(null);
+                  setChatInput("");
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground mt-2">
+              Parsed using {parseResult.provider} ({parseResult.model}) in {parseResult.latencyMs}ms
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Manual Entry Dialog */}
       <div className="flex justify-end">
@@ -292,9 +357,9 @@ export default function TransactionsPage() {
                 <div key={i} className="h-16 bg-muted rounded animate-pulse" />
               ))}
             </div>
-          ) : transactionsData?.transactions && transactionsData.transactions.length > 0 ? (
+          ) : (transactionsData?.transactions as any[]) && (transactionsData!.transactions as any[]).length > 0 ? (
             <div className="space-y-3">
-              {(transactionsData.transactions as any[]).map((transaction: any) => (
+              {(transactionsData!.transactions as any[]).map((transaction: any) => (
                 <div
                   key={transaction.id}
                   className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors"
@@ -316,7 +381,7 @@ export default function TransactionsPage() {
                     <div>
                       <p className="font-medium">{transaction.description}</p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>{transaction.account.name}</span>
+                        <span>{transaction.account?.name}</span>
                         {transaction.category && (
                           <>
                             <span>·</span>
@@ -351,7 +416,7 @@ export default function TransactionsPage() {
               <ArrowLeftRight className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <p className="text-muted-foreground">No transactions yet</p>
               <p className="text-sm text-muted-foreground">
-                Use the quick entry above or add manually
+                Use the AI-powered quick entry above to add your first transaction
               </p>
             </div>
           )}
