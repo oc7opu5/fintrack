@@ -23,7 +23,6 @@ export const accountRouter = router({
             take: 20,
             include: { category: true },
           },
-          creditCards: true,
         },
       });
     }),

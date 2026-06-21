@@ -66,14 +66,15 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  accounts      Account[]
-  transactions  Transaction[]
-  creditCards   CreditCard[]
-  subscriptions Subscription[]
-  budgets       Budget[]
-  categories    Category[]
-  tags          Tag[]
-  aiParseLogs   AIParseLog[]
+  accounts        Account[]
+  transactions    Transaction[]
+  creditCards     CreditCard[]
+  creditCardLoans CreditCardLoan[]
+  subscriptions   Subscription[]
+  budgets         Budget[]
+  categories      Category[]
+  tags            Tag[]
+  aiParseLogs     AIParseLog[]
 
   @@map("users")
 }
@@ -95,7 +96,6 @@ model Account {
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
-  creditCards  CreditCard[]
 
   @@unique([userId, name, type])
   @@index([userId, type])
