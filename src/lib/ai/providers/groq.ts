@@ -1,29 +1,29 @@
 import { ParseResult } from "../types";
 import { AIProvider, buildParsePrompt, parseAIResponse, splitTransactions, registerProvider } from "./index";
 
-export function createOpenAIProvider(): AIProvider {
+export function createGroqProvider(): AIProvider {
   return {
-    name: "openai",
-    parse: parseWithOpenAI,
+    name: "groq",
+    parse: parseWithGroq,
   };
 }
 
-registerProvider("OPENAI_API_KEY", createOpenAIProvider);
+registerProvider("GROQ_API_KEY", createGroqProvider);
 
-export async function parseWithOpenAI(
+async function parseWithGroq(
   input: string,
   categories: string[],
   accounts: string[]
 ): Promise<ParseResult> {
   const startTime = Date.now();
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
     return {
       success: false,
-      error: "OpenAI API key not configured",
-      provider: "openai",
-      model: "gpt-4o-mini",
+      error: "Groq API key not configured",
+      provider: "groq",
+      model: "llama-3.1-8b-instant",
       latencyMs: Date.now() - startTime,
     };
   }
@@ -33,14 +33,14 @@ export async function parseWithOpenAI(
   const prompt = buildParsePrompt(input, categories, accounts, isMulti);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "llama-3.1-8b-instant",
         messages: [
           { role: "system", content: "You are a financial transaction parser. Respond with valid JSON only." },
           { role: "user", content: prompt },
@@ -56,20 +56,20 @@ export async function parseWithOpenAI(
     if (!content) {
       return {
         success: false,
-        error: "No response from OpenAI",
-        provider: "openai",
-        model: "gpt-4o-mini",
+        error: "No response from Groq",
+        provider: "groq",
+        model: "llama-3.1-8b-instant",
         latencyMs: Date.now() - startTime,
       };
     }
 
-    return parseAIResponse(content, "openai", "gpt-4o-mini", Date.now() - startTime);
+    return parseAIResponse(content, "groq", "llama-3.1-8b-instant", Date.now() - startTime);
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to parse",
-      provider: "openai",
-      model: "gpt-4o-mini",
+      provider: "groq",
+      model: "llama-3.1-8b-instant",
       latencyMs: Date.now() - startTime,
     };
   }

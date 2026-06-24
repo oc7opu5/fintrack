@@ -1,29 +1,29 @@
 import { ParseResult } from "../types";
 import { AIProvider, buildParsePrompt, parseAIResponse, splitTransactions, registerProvider } from "./index";
 
-export function createOpenAIProvider(): AIProvider {
+export function createDeepSeekProvider(): AIProvider {
   return {
-    name: "openai",
-    parse: parseWithOpenAI,
+    name: "deepseek",
+    parse: parseWithDeepSeek,
   };
 }
 
-registerProvider("OPENAI_API_KEY", createOpenAIProvider);
+registerProvider("DEEPSEEK_API_KEY", createDeepSeekProvider);
 
-export async function parseWithOpenAI(
+async function parseWithDeepSeek(
   input: string,
   categories: string[],
   accounts: string[]
 ): Promise<ParseResult> {
   const startTime = Date.now();
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.DEEPSEEK_API_KEY;
 
   if (!apiKey) {
     return {
       success: false,
-      error: "OpenAI API key not configured",
-      provider: "openai",
-      model: "gpt-4o-mini",
+      error: "DeepSeek API key not configured",
+      provider: "deepseek",
+      model: "deepseek-chat",
       latencyMs: Date.now() - startTime,
     };
   }
@@ -33,14 +33,14 @@ export async function parseWithOpenAI(
   const prompt = buildParsePrompt(input, categories, accounts, isMulti);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "deepseek-chat",
         messages: [
           { role: "system", content: "You are a financial transaction parser. Respond with valid JSON only." },
           { role: "user", content: prompt },
@@ -56,20 +56,20 @@ export async function parseWithOpenAI(
     if (!content) {
       return {
         success: false,
-        error: "No response from OpenAI",
-        provider: "openai",
-        model: "gpt-4o-mini",
+        error: "No response from DeepSeek",
+        provider: "deepseek",
+        model: "deepseek-chat",
         latencyMs: Date.now() - startTime,
       };
     }
 
-    return parseAIResponse(content, "openai", "gpt-4o-mini", Date.now() - startTime);
+    return parseAIResponse(content, "deepseek", "deepseek-chat", Date.now() - startTime);
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to parse",
-      provider: "openai",
-      model: "gpt-4o-mini",
+      provider: "deepseek",
+      model: "deepseek-chat",
       latencyMs: Date.now() - startTime,
     };
   }

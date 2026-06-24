@@ -1,29 +1,29 @@
 import { ParseResult } from "../types";
 import { AIProvider, buildParsePrompt, parseAIResponse, splitTransactions, registerProvider } from "./index";
 
-export function createOpenAIProvider(): AIProvider {
+export function createOpenRouterProvider(): AIProvider {
   return {
-    name: "openai",
-    parse: parseWithOpenAI,
+    name: "openrouter",
+    parse: parseWithOpenRouter,
   };
 }
 
-registerProvider("OPENAI_API_KEY", createOpenAIProvider);
+registerProvider("OPENROUTER_API_KEY", createOpenRouterProvider);
 
-export async function parseWithOpenAI(
+async function parseWithOpenRouter(
   input: string,
   categories: string[],
   accounts: string[]
 ): Promise<ParseResult> {
   const startTime = Date.now();
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
     return {
       success: false,
-      error: "OpenAI API key not configured",
-      provider: "openai",
-      model: "gpt-4o-mini",
+      error: "OpenRouter API key not configured",
+      provider: "openrouter",
+      model: "meta-llama/llama-3.1-8b-instruct:free",
       latencyMs: Date.now() - startTime,
     };
   }
@@ -31,16 +31,19 @@ export async function parseWithOpenAI(
   const parts = splitTransactions(input);
   const isMulti = parts.length > 1;
   const prompt = buildParsePrompt(input, categories, accounts, isMulti);
+  const model = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.1-8b-instruct:free";
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
+        "HTTP-Referer": "https://fintrack.app",
+        "X-Title": "FinTrack",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model,
         messages: [
           { role: "system", content: "You are a financial transaction parser. Respond with valid JSON only." },
           { role: "user", content: prompt },
@@ -56,20 +59,20 @@ export async function parseWithOpenAI(
     if (!content) {
       return {
         success: false,
-        error: "No response from OpenAI",
-        provider: "openai",
-        model: "gpt-4o-mini",
+        error: "No response from OpenRouter",
+        provider: "openrouter",
+        model,
         latencyMs: Date.now() - startTime,
       };
     }
 
-    return parseAIResponse(content, "openai", "gpt-4o-mini", Date.now() - startTime);
+    return parseAIResponse(content, "openrouter", model, Date.now() - startTime);
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to parse",
-      provider: "openai",
-      model: "gpt-4o-mini",
+      provider: "openrouter",
+      model,
       latencyMs: Date.now() - startTime,
     };
   }
