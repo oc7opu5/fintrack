@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown, Sparkles, CreditCard, AlertCircle, Check } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ArrowLeftRight,
+  Plus,
+  Send,
+  TrendingUp,
+  TrendingDown,
+  Sparkles,
+  CreditCard,
+  AlertCircle,
+  Check,
+  Mail,
+  FileText,
+  Image,
+  Upload,
+  Loader2,
+} from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 type ParsedTx = {

@@ -7,6 +7,7 @@ import { loanRouter } from "./loan";
 import { subscriptionRouter } from "./subscription";
 import { budgetRouter } from "./budget";
 import { aiRouter } from "./ai";
+import { parserRouter } from "./parser";
 
 export const appRouter = router({
   account: accountRouter,
@@ -17,6 +18,7 @@ export const appRouter = router({
   subscription: subscriptionRouter,
   budget: budgetRouter,
   ai: aiRouter,
+  parser: parserRouter,
 });
 
 export type AppRouter = typeof appRouter;
