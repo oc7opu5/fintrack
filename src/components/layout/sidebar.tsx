@@ -27,7 +27,8 @@ const navigation = [
   { name: "Subscriptions", href: "/subscriptions", icon: RefreshCw },
   { name: "Budget", href: "/budget", icon: PieChart },
   { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "AI Assistant", href: "/chat", icon: Bot, badge: "New" },
+  { name: "AI Assistant", href: "/chat", icon: Bot },
+  { name: "AI Settings", href: "/settings/ai", icon: Sparkles },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -56,11 +57,6 @@ export function Sidebar() {
             >
               <item.icon className="w-5 h-5" />
               {item.name}
-              {"badge" in item && item.badge && (
-                <span className="ml-auto text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded">
-                  {item.badge}
-                </span>
-              )}
             </Link>
           );
         })}
