@@ -288,6 +288,8 @@ model Subscription {
   autoRenew       Boolean             @default(true)
   category        String?
   website         String?
+  email           String?
+  logo            String?
   notes           String?
   color           String?
   icon            String?

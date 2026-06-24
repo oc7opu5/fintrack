@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,9 @@ import {
   Pause,
   Play,
   X,
+  Mail,
+  Globe,
+  Image,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -43,6 +46,16 @@ const billingCycleOptions = [
   { value: "LIFETIME", label: "Lifetime (One-time)" },
 ];
 
+// Auto-fetch logo from domain
+function getLogoUrl(website: string): string {
+  try {
+    const url = new URL(website.startsWith("http") ? website : `https://${website}`);
+    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`;
+  } catch {
+    return "";
+  }
+}
+
 export default function SubscriptionsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filter, setFilter] = useState("ACTIVE");
@@ -53,8 +66,20 @@ export default function SubscriptionsPage() {
     description: "",
     category: "",
     website: "",
+    email: "",
+    logo: "",
     startDate: new Date().toISOString().split("T")[0],
   });
+
+  // Auto-fetch logo when website changes
+  useEffect(() => {
+    if (newSub.website && !newSub.logo) {
+      const logoUrl = getLogoUrl(newSub.website);
+      if (logoUrl) {
+        setNewSub((prev) => ({ ...prev, logo: logoUrl }));
+      }
+    }
+  }, [newSub.website]);
 
   const utils = trpc.useUtils();
   const { data: subscriptions, isLoading } = trpc.subscription?.list?.useQuery(
@@ -77,6 +102,8 @@ export default function SubscriptionsPage() {
         description: "",
         category: "",
         website: "",
+        email: "",
+        logo: "",
         startDate: new Date().toISOString().split("T")[0],
       });
     },
@@ -107,7 +134,7 @@ export default function SubscriptionsPage() {
               Add Subscription
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add Subscription</DialogTitle>
             </DialogHeader>
@@ -159,22 +186,47 @@ export default function SubscriptionsPage() {
                 </div>
               </div>
               <div className="space-y-2">
+                <Label>Website (optional)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="https://netflix.com"
+                    value={newSub.website}
+                    onChange={(e) =>
+                      setNewSub({ ...newSub, website: e.target.value, logo: "" })
+                    }
+                    className="flex-1"
+                  />
+                  {newSub.logo && (
+                    <img
+                      src={newSub.logo}
+                      alt="Logo"
+                      className="w-9 h-9 rounded border"
+                      onError={() => setNewSub({ ...newSub, logo: "" })}
+                    />
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Logo auto-fetched from website
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label>Email (optional)</Label>
+                <Input
+                  type="email"
+                  placeholder="account@email.com"
+                  value={newSub.email}
+                  onChange={(e) =>
+                    setNewSub({ ...newSub, email: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
                 <Label>Category (optional)</Label>
                 <Input
                   placeholder="e.g., Entertainment"
                   value={newSub.category}
                   onChange={(e) =>
                     setNewSub({ ...newSub, category: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Website (optional)</Label>
-                <Input
-                  placeholder="https://netflix.com"
-                  value={newSub.website}
-                  onChange={(e) =>
-                    setNewSub({ ...newSub, website: e.target.value })
                   }
                 />
               </div>
@@ -288,13 +340,31 @@ export default function SubscriptionsPage() {
             <Card key={sub.id} className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <p className="font-medium text-lg">{sub.name}</p>
-                    {sub.category && (
-                      <p className="text-sm text-muted-foreground">
-                        {sub.category}
-                      </p>
+                  <div className="flex items-center gap-3">
+                    {sub.logo ? (
+                      <img
+                        src={sub.logo}
+                        alt={sub.name}
+                        className="w-10 h-10 rounded-lg border"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                        <span className="text-lg font-bold">
+                          {sub.name.charAt(0)}
+                        </span>
+                      </div>
                     )}
+                    <div>
+                      <p className="font-medium text-lg">{sub.name}</p>
+                      {sub.category && (
+                        <p className="text-sm text-muted-foreground">
+                          {sub.category}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <Badge
                     variant={
@@ -334,14 +404,22 @@ export default function SubscriptionsPage() {
                     </div>
                   )}
 
+                  {sub.email && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Mail className="w-4 h-4" />
+                      <span>{sub.email}</span>
+                    </div>
+                  )}
+
                   {sub.website && (
                     <a
                       href={sub.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline block"
+                      className="flex items-center gap-2 text-sm text-primary hover:underline"
                     >
-                      {sub.website}
+                      <Globe className="w-4 h-4" />
+                      {sub.website.replace(/^https?:\/\//, "")}
                     </a>
                   )}
 

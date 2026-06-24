@@ -69,7 +69,7 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-          <div className="space-y-2" suppressHydrationWarning>
+          <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -78,10 +78,9 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              suppressHydrationWarning
             />
           </div>
-          <div className="space-y-2" suppressHydrationWarning>
+          <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -90,7 +89,6 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              suppressHydrationWarning
             />
           </div>
         </CardContent>

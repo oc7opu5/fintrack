@@ -50,6 +50,8 @@ export const subscriptionRouter = router({
         description: z.string().optional(),
         category: z.string().optional(),
         website: z.string().optional(),
+        email: z.string().optional(),
+        logo: z.string().optional(),
         startDate: z.coerce.date(),
         status: z
           .enum(["ACTIVE", "PAUSED", "CANCELLED", "LIFETIME"])
@@ -78,6 +80,9 @@ export const subscriptionRouter = router({
           .enum(["ACTIVE", "PAUSED", "CANCELLED", "LIFETIME"])
           .optional(),
         autoRenew: z.boolean().optional(),
+        email: z.string().optional(),
+        logo: z.string().optional(),
+        website: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

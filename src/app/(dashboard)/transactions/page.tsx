@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import {
   Dialog,
   DialogContent,
@@ -22,12 +21,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown, Sparkles, CreditCard, AlertCircle } from "lucide-react";
+import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown, Sparkles, CreditCard, AlertCircle, Check } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
+
+type ParsedTx = {
+  type: "INCOME" | "EXPENSE";
+  amount: number;
+  description: string;
+  category?: string;
+  account?: string;
+  date: string;
+  confidence: number;
+};
 
 export default function TransactionsPage() {
   const [chatInput, setChatInput] = useState("");
   const [parseResult, setParseResult] = useState<any>(null);
+  const [selectedTxs, setSelectedTxs] = useState<Set<number>>(new Set());
   const [isManualDialogOpen, setIsManualDialogOpen] = useState(false);
   const [manualTransaction, setManualTransaction] = useState({
     accountId: "",
@@ -54,19 +64,6 @@ export default function TransactionsPage() {
       utils.transaction.list.invalidate();
       utils.account.list.invalidate();
       utils.creditCard.list.invalidate();
-      setIsManualDialogOpen(false);
-      setChatInput("");
-      setParseResult(null);
-      setManualTransaction({
-        accountId: "",
-        categoryId: "",
-        creditCardId: "",
-        type: "EXPENSE",
-        amount: 0,
-        description: "",
-        note: "",
-        date: new Date().toISOString().split("T")[0],
-      });
     },
     onError: (error: Error) => {
       console.error("Failed to create transaction:", error.message);
@@ -75,37 +72,62 @@ export default function TransactionsPage() {
 
   const parseMutation = trpc.ai.parse.useMutation({
     onSuccess: (result: any) => {
-      if (result.success && result.transaction) {
+      if (result.success) {
         setParseResult(result);
+        // Auto-select all transactions
+        const txs = result.transactions || (result.transaction ? [result.transaction] : []);
+        setSelectedTxs(new Set(txs.map((_: any, i: number) => i)));
       }
     },
   } as any);
+
+  const transactions: ParsedTx[] = parseResult?.transactions || 
+    (parseResult?.transaction ? [parseResult.transaction] : []);
 
   const handleChatSubmit = () => {
     if (!chatInput.trim()) return;
     parseMutation.mutate({ input: chatInput });
   };
 
-  const handleAcceptParsed = () => {
-    if (!parseResult?.transaction || !accounts?.length) return;
-
-    const txn = parseResult.transaction;
-    const account = accounts.find(
-      (a) => a.name.toLowerCase().includes(txn.account?.toLowerCase() || "") || a.isDefault
-    ) || accounts[0];
-
-    const category = categories?.find(
-      (c) => c.name.toLowerCase().includes(txn.category?.toLowerCase() || "")
-    );
-
-    createTransaction.mutate({
-      accountId: account.id,
-      categoryId: category?.id,
-      type: txn.type,
-      amount: txn.amount,
-      description: txn.description,
-      date: new Date(txn.date),
+  const toggleTxSelection = (index: number) => {
+    setSelectedTxs((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
     });
+  };
+
+  const handleAcceptParsed = () => {
+    if (!transactions.length || !accounts?.length) return;
+
+    const selected = transactions.filter((_, i) => selectedTxs.has(i));
+    
+    for (const txn of selected) {
+      const account = accounts.find(
+        (a) => a.name.toLowerCase().includes(txn.account?.toLowerCase() || "") || a.isDefault
+      ) || accounts[0];
+
+      const category = categories?.find(
+        (c) => c.name.toLowerCase().includes(txn.category?.toLowerCase() || "")
+      );
+
+      createTransaction.mutate({
+        accountId: account.id,
+        categoryId: category?.id,
+        type: txn.type,
+        amount: txn.amount,
+        description: txn.description,
+        date: new Date(txn.date),
+      });
+    }
+
+    setParseResult(null);
+    setSelectedTxs(new Set());
+    setChatInput("");
   };
 
   const [formError, setFormError] = useState("");
@@ -129,7 +151,8 @@ export default function TransactionsPage() {
       categoryId: manualTransaction.categoryId || undefined,
       creditCardId: manualTransaction.creditCardId || undefined,
       date: new Date(manualTransaction.date),
-    });
+    } as any);
+    setIsManualDialogOpen(false);
   };
 
   const resetManualForm = () => {
@@ -164,7 +187,7 @@ export default function TransactionsPage() {
           </div>
           <div className="flex gap-2">
             <Input
-              placeholder='Try: "spent 500 on lunch via bKash" or "earned 50000 salary"'
+              placeholder='Try: "spent 500 on lunch, earned 50000 salary, ride 200 taka"'
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => {
@@ -187,65 +210,105 @@ export default function TransactionsPage() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            AI will parse your input and suggest a transaction. You can edit before saving.
+            Enter multiple transactions separated by commas. AI will parse them all.
           </p>
         </CardContent>
       </Card>
 
-      {/* Parsed Transaction Preview */}
-      {parseResult?.success && parseResult.transaction && (
+      {/* Parsed Transactions Preview */}
+      {parseResult?.success && transactions.length > 0 && (
         <Card className="border-emerald-500/50 bg-emerald-500/5">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-emerald-500" />
-                <p className="text-sm font-medium text-emerald-500">AI Parsed Transaction</p>
+                <p className="text-sm font-medium text-emerald-500">
+                  AI Parsed {transactions.length} Transaction{transactions.length > 1 ? "s" : ""}
+                </p>
               </div>
               <Badge variant="outline" className="text-xs">
-                {Math.round(parseResult.transaction.confidence * 100)}% confidence
+                {Math.round(transactions.reduce((acc: number, t: ParsedTx) => acc + t.confidence, 0) / transactions.length * 100)}% confidence
               </Badge>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div>
-                <p className="text-xs text-muted-foreground">Type</p>
-                <p className={`font-medium ${parseResult.transaction.type === "INCOME" ? "text-emerald-500" : "text-rose-500"}`}>
-                  {parseResult.transaction.type}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Amount</p>
-                <p className="font-medium">{formatCurrency(parseResult.transaction.amount)}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Description</p>
-                <p className="font-medium">{parseResult.transaction.description}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Category</p>
-                <p className="font-medium">{parseResult.transaction.category || "Other"}</p>
-              </div>
+            <div className="space-y-3">
+              {transactions.map((tx: ParsedTx, index: number) => (
+                <div
+                  key={index}
+                  className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                    selectedTxs.has(index) 
+                      ? "bg-emerald-500/10 border-emerald-500/30" 
+                      : "bg-background hover:bg-accent/50"
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleTxSelection(index)}
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                      selectedTxs.has(index)
+                        ? "bg-emerald-500 border-emerald-500 text-white"
+                        : "border-muted-foreground/30"
+                    }`}
+                  >
+                    {selectedTxs.has(index) && <Check className="w-3 h-3" />}
+                  </button>
+                  
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    tx.type === "INCOME" ? "bg-emerald-500/10" : "bg-rose-500/10"
+                  }`}>
+                    {tx.type === "INCOME" ? (
+                      <TrendingUp className="w-4 h-4 text-emerald-500" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4 text-rose-500" />
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{tx.description}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tx.category || "Other"} · {tx.account || "Default"} · {tx.date}
+                    </p>
+                  </div>
+                  
+                  <span className={`font-semibold ${
+                    tx.type === "INCOME" ? "text-emerald-500" : "text-rose-500"
+                  }`}>
+                    {tx.type === "INCOME" ? "+" : "-"}
+                    {formatCurrency(tx.amount)}
+                  </span>
+                </div>
+              ))}
             </div>
 
-            {parseResult.transaction.account && (
-              <div className="mb-4">
-                <p className="text-xs text-muted-foreground">Account</p>
-                <p className="font-medium">{parseResult.transaction.account}</p>
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              <Button onClick={handleAcceptParsed} disabled={createTransaction.isPending}>
-                {createTransaction.isPending ? "Adding..." : "Accept & Add"}
+            <div className="flex gap-2 mt-4">
+              <Button onClick={handleAcceptParsed} disabled={createTransaction.isPending || selectedTxs.size === 0}>
+                {createTransaction.isPending ? (
+                  "Adding..."
+                ) : (
+                  `Add ${selectedTxs.size} Selected`
+                )}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => {
                   setParseResult(null);
+                  setSelectedTxs(new Set());
                   setChatInput("");
                 }}
               >
                 Cancel
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (selectedTxs.size === transactions.length) {
+                    setSelectedTxs(new Set());
+                  } else {
+                    setSelectedTxs(new Set(transactions.map((_: any, i: number) => i)));
+                  }
+                }}
+              >
+                {selectedTxs.size === transactions.length ? "Deselect All" : "Select All"}
               </Button>
             </div>
 

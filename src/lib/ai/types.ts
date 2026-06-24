@@ -11,6 +11,7 @@ export interface ParsedTransaction {
 export interface ParseResult {
   success: boolean;
   transaction?: ParsedTransaction;
+  transactions?: ParsedTransaction[];
   error?: string;
   provider: string;
   model: string;

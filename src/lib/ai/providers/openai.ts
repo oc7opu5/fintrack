@@ -1,5 +1,22 @@
 import { ParsedTransaction, ParseResult } from "../types";
 
+// Split multi-transaction input
+function splitTransactions(input: string): string[] {
+  const normalized = input
+    .replace(/\band\b/gi, ",")
+    .replace(/;/g, ",")
+    .replace(/\n/g, ",")
+    .replace(/,\s*,/g, ",")
+    .trim();
+
+  const parts = normalized
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 3 && /\d/.test(s));
+
+  return parts.length > 0 ? parts : [input];
+}
+
 export async function parseWithOpenAI(
   input: string,
   categories: string[],
@@ -19,8 +36,29 @@ export async function parseWithOpenAI(
   }
 
   const currentDate = new Date().toISOString().split("T")[0];
+  const parts = splitTransactions(input);
+  const isMulti = parts.length > 1;
 
-  const prompt = `Parse this transaction: "${input}"
+  const prompt = isMulti
+    ? `Parse these transactions: "${input}"
+
+Split into individual transactions. Current date: ${currentDate}
+Available categories: ${categories.join(", ")}
+Available accounts: ${accounts.join(", ")}
+
+Return a JSON array:
+[
+  {
+    "type": "INCOME" | "EXPENSE",
+    "amount": number,
+    "description": "string",
+    "category": "string",
+    "account": "string or null",
+    "date": "YYYY-MM-DD",
+    "confidence": number (0-1)
+  }
+]`
+    : `Parse this transaction: "${input}"
 
 Current date: ${currentDate}
 Available categories: ${categories.join(", ")}
@@ -51,7 +89,7 @@ Return ONLY a JSON object:
           { role: "user", content: prompt },
         ],
         temperature: 0.1,
-        max_tokens: 200,
+        max_tokens: isMulti ? 1000 : 200,
       }),
     });
 
@@ -68,11 +106,23 @@ Return ONLY a JSON object:
       };
     }
 
-    const parsed = JSON.parse(content) as ParsedTransaction;
+    const parsed = JSON.parse(content);
+
+    if (Array.isArray(parsed)) {
+      return {
+        success: parsed.length > 0,
+        transaction: parsed[0],
+        transactions: parsed,
+        provider: "openai",
+        model: "gpt-4o-mini",
+        latencyMs: Date.now() - startTime,
+      };
+    }
 
     return {
       success: true,
       transaction: parsed,
+      transactions: [parsed],
       provider: "openai",
       model: "gpt-4o-mini",
       latencyMs: Date.now() - startTime,
