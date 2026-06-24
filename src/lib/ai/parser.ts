@@ -11,28 +11,29 @@ function parseWithRegex(
   const startTime = Date.now();
   const normalizedInput = input.toLowerCase().trim();
 
-  // Detect type
+  // Detect type - "spent" and similar words always mean expense
   const isExpense =
-    /spent|paid|bought|purchased|cost|expense|lunch|dinner|breakfast|groceries|uber|taxi|food|rent|bill/i.test(
+    /\b(spent|paid|bought|purchased|cost|expense|lunch|dinner|breakfast|groceries|uber|taxi|food|rent|bill|subscription|deal)\b/i.test(
       normalizedInput
     );
   const isIncome =
-    /earned|received|salary|income|freelance|refund|cashback|bonus/i.test(
+    /\b(earned|received|salary|income|freelance|refund|cashback|bonus)\b/i.test(
       normalizedInput
     );
 
-  const type = isIncome ? "INCOME" : "EXPENSE";
+  const type = isIncome && !isExpense ? "INCOME" : "EXPENSE";
 
-  // Extract amount
+  // Extract amount - handle $ symbol and commas
   const amountMatch = normalizedInput.match(
-    /(\d+(?:\.\d{1,2})?)/
+    /[\$]?\s*(\d+(?:,\d{3})*(?:\.\d{1,2})?)/
   );
-  const amount = amountMatch ? parseFloat(amountMatch[1]) : 0;
+  const amount = amountMatch ? parseFloat(amountMatch[1].replace(/,/g, "")) : 0;
 
-  // Extract description (everything except amount and keywords)
+  // Extract description (everything except amount, currency symbols, and keywords)
   let description = normalizedInput
+    .replace(/\$|€|£|৳|bdt/gi, "")
     .replace(/spent|paid|bought|earned|received|on|for|from|via|through/gi, "")
-    .replace(/\d+(?:\.\d{1,2})?/, "")
+    .replace(/\d+(?:,\d{3})*(?:\.\d{1,2})?/, "")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -40,9 +41,9 @@ function parseWithRegex(
     description = type === "INCOME" ? "Income" : "Expense";
   }
 
-  // Match account
+  // Match account - try to find the best matching account from user's actual accounts
   let account: string | undefined;
-  const accountPatterns: Record<string, string[]> = {
+  const accountKeywords: Record<string, string[]> = {
     BKASH: ["bkash", "b kash"],
     NAGAD: ["nagad"],
     ROCKET: ["rocket"],
@@ -51,9 +52,15 @@ function parseWithRegex(
     CASH: ["cash"],
   };
 
-  for (const [type, patterns] of Object.entries(accountPatterns)) {
+  // First try to match by keyword, then map to actual account name
+  for (const [key, patterns] of Object.entries(accountKeywords)) {
     if (patterns.some((p) => normalizedInput.includes(p))) {
-      account = type;
+      // Find the user's actual account that matches this type
+      const matchedAccount = accounts.find((a) =>
+        a.toLowerCase().includes(key.toLowerCase().replace("_", " ")) ||
+        patterns.some((p) => a.toLowerCase().includes(p))
+      );
+      account = matchedAccount || accounts[0];
       break;
     }
   }
@@ -63,11 +70,12 @@ function parseWithRegex(
     "Food & Dining": ["lunch", "dinner", "breakfast", "food", "meal", "restaurant", "cafe", "coffee"],
     Transportation: ["uber", "taxi", "bus", "train", "fuel", "gas", "parking", "transport"],
     Shopping: ["bought", "shopping", "store", "mall", "online"],
-    "Bills & Utilities": ["bill", "electricity", "water", "gas", "internet", "phone", "recharge"],
+    "Bills & Utilities": ["bill", "electricity", "water", "internet", "phone", "recharge"],
     Entertainment: ["movie", "netflix", "spotify", "game", "entertainment"],
     Healthcare: ["doctor", "medicine", "hospital", "pharmacy", "health"],
     Education: ["book", "course", "tuition", "education", "learning"],
     Subscriptions: ["subscription", "monthly", "yearly", "plan"],
+    "Credit Card": ["credit card", "card", "installment", "emi", "loan", "deal"],
     Salary: ["salary", "wage", "pay"],
     Freelance: ["freelance", "client", "project", "contract"],
   };
@@ -77,16 +85,18 @@ function parseWithRegex(
     if (keywords.some((k) => normalizedInput.includes(k))) {
       matchedCategory = categories.find((c) =>
         c.toLowerCase().includes(category.toLowerCase())
-      ) || category;
+      );
       break;
     }
   }
 
-  // Default to first matching category type
+  // Default: find an expense or income category that contains "other" but NOT "other income" for expenses
   if (!matchedCategory) {
-    matchedCategory = type === "INCOME"
-      ? categories.find((c) => c.toLowerCase().includes("other income")) || categories[0]
-      : categories.find((c) => c.toLowerCase().includes("other")) || categories[0];
+    if (type === "INCOME") {
+      matchedCategory = categories.find((c) => c.toLowerCase().includes("other income")) || categories[0];
+    } else {
+      matchedCategory = categories.find((c) => c.toLowerCase().includes("other") && !c.toLowerCase().includes("income")) || categories[0];
+    }
   }
 
   // Parse date

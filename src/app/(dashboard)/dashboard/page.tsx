@@ -3,10 +3,45 @@
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet, TrendingUp, TrendingDown, PiggyBank } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate, getAccountTypeIcon } from "@/lib/utils";
+import { trpc } from "@/lib/trpc/client";
+
+type Transaction = {
+  id: string;
+  description: string;
+  amount: string | number;
+  type: "INCOME" | "EXPENSE" | "TRANSFER";
+  date: string | Date;
+  account: { type: string; name: string };
+  category: { name: string } | null;
+};
+
+type Subscription = {
+  id: string;
+  name: string;
+  amount: string | number;
+  billingCycle: string;
+  nextBillingDate: string | Date | null;
+};
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const now = new Date();
+
+  const { data: netWorth } = trpc.account.netWorth.useQuery();
+  const { data: monthly } = trpc.transaction.monthlySummary.useQuery({
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+  });
+  const { data: recentTx } = trpc.transaction.list.useQuery({ limit: 5 });
+  const { data: subs } = trpc.subscription.list.useQuery();
+
+  const transactions = (recentTx?.transactions ?? []) as Transaction[];
+  const subscriptions = (subs ?? []) as Subscription[];
+
+  const savingsPercent = monthly?.income
+    ? Math.round((monthly.savings / monthly.income) * 100)
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -26,7 +61,9 @@ export default function DashboardPage() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(0)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(netWorth?.netWorth ?? 0)}
+            </div>
             <p className="text-xs text-muted-foreground">
               Across all accounts
             </p>
@@ -39,10 +76,10 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-emerald-500">
-              {formatCurrency(0)}
+              {formatCurrency(monthly?.income ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              +0% from last month
+              {monthly?.incomeCount ?? 0} transactions
             </p>
           </CardContent>
         </Card>
@@ -53,10 +90,10 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-rose-500">
-              {formatCurrency(0)}
+              {formatCurrency(monthly?.expense ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              +0% from last month
+              {monthly?.expenseCount ?? 0} transactions
             </p>
           </CardContent>
         </Card>
@@ -66,9 +103,11 @@ export default function DashboardPage() {
             <PiggyBank className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(0)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(monthly?.savings ?? 0)}
+            </div>
             <p className="text-xs text-muted-foreground">
-              0% of income saved
+              {savingsPercent}% of income saved
             </p>
           </CardContent>
         </Card>
@@ -80,9 +119,39 @@ export default function DashboardPage() {
             <CardTitle>Recent Transactions</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-center py-8">
-              No transactions yet. Start by adding your first transaction!
-            </p>
+            {transactions.length ? (
+              <div className="space-y-3">
+                {transactions.map((tx) => (
+                  <div key={tx.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">
+                        {getAccountTypeIcon(tx.account.type)}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium">{tx.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {tx.category?.name || tx.account.name} · {formatDate(tx.date)}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={
+                        tx.type === "INCOME"
+                          ? "text-emerald-500 font-medium"
+                          : "text-rose-500 font-medium"
+                      }
+                    >
+                      {tx.type === "INCOME" ? "+" : "-"}
+                      {formatCurrency(Number(tx.amount))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">
+                No transactions yet. Start by adding your first transaction!
+              </p>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -90,9 +159,27 @@ export default function DashboardPage() {
             <CardTitle>Upcoming Subscriptions</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-center py-8">
-              No subscriptions tracked yet.
-            </p>
+            {subscriptions.length ? (
+              <div className="space-y-3">
+                {subscriptions.slice(0, 5).map((sub) => (
+                  <div key={sub.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">{sub.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {sub.billingCycle} · {sub.nextBillingDate ? formatDate(sub.nextBillingDate) : "N/A"}
+                      </p>
+                    </div>
+                    <span className="text-sm font-medium">
+                      {formatCurrency(Number(sub.amount))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">
+                No subscriptions tracked yet.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

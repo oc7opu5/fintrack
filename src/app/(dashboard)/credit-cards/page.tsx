@@ -37,6 +37,10 @@ export default function CreditCardsPage() {
   const [isAddLoanOpen, setIsAddLoanOpen] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
+  const [isPayInstallmentOpen, setIsPayInstallmentOpen] = useState(false);
+  const [selectedLoanId, setSelectedLoanId] = useState<string | null>(null);
+  const [selectedInstallmentNo, setSelectedInstallmentNo] = useState<number>(0);
+
   const [newCard, setNewCard] = useState({
     name: "",
     creditLimit: 0,
@@ -80,6 +84,7 @@ export default function CreditCardsPage() {
   const createLoan = trpc.loan?.create?.useMutation({
     onSuccess: () => {
       utils.creditCard?.getById?.invalidate({ id: selectedCardId || "" });
+      utils.creditCard?.list?.invalidate();
       setIsAddLoanOpen(false);
       setNewLoan({
         creditCardId: "",
@@ -89,6 +94,16 @@ export default function CreditCardsPage() {
         totalInstallments: 12,
         startDate: new Date().toISOString().split("T")[0],
       });
+    },
+  });
+
+  const payInstallment = trpc.loan?.payInstallment?.useMutation({
+    onSuccess: () => {
+      utils.creditCard?.getById?.invalidate({ id: selectedCardId || "" });
+      utils.creditCard?.list?.invalidate();
+      setIsPayInstallmentOpen(false);
+      setSelectedLoanId(null);
+      setSelectedInstallmentNo(0);
     },
   });
 
@@ -516,16 +531,41 @@ export default function CreditCardsPage() {
                                   key={inst.id}
                                   className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded"
                                 >
-                                  <span>
-                                    #{inst.installmentNo} -{" "}
-                                    {formatDate(inst.dueDate)}
-                                  </span>
-                                  <span className="font-medium">
-                                    {formatCurrency(Number(inst.totalPayment))}
-                                  </span>
+                                  <div>
+                                    <span className="font-medium">
+                                      #{inst.installmentNo}
+                                    </span>
+                                    <span className="text-muted-foreground ml-2">
+                                      {formatDate(inst.dueDate)}
+                                    </span>
+                                    <span className="text-muted-foreground ml-2">
+                                      (P: {formatCurrency(Number(inst.principalPortion))} + I: {formatCurrency(Number(inst.interestPortion))})
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">
+                                      {formatCurrency(Number(inst.totalPayment))}
+                                    </span>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        setSelectedLoanId(loan.id);
+                                        setSelectedInstallmentNo(inst.installmentNo);
+                                        setIsPayInstallmentOpen(true);
+                                      }}
+                                    >
+                                      Pay
+                                    </Button>
+                                  </div>
                                 </div>
                               ))}
                           </div>
+                          {loan.installments.filter((i) => i.status === "PENDING").length > 3 && (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              +{loan.installments.filter((i) => i.status === "PENDING").length - 3} more installments
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -543,6 +583,67 @@ export default function CreditCardsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Pay Installment Dialog */}
+      <Dialog open={isPayInstallmentOpen} onOpenChange={setIsPayInstallmentOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pay Installment</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            {selectedLoanId && selectedCardData?.loans && (() => {
+              const loan = selectedCardData.loans.find((l) => l.id === selectedLoanId);
+              if (!loan) return null;
+              const inst = loan.installments?.find(
+                (i) => i.installmentNo === selectedInstallmentNo && i.status === "PENDING"
+              );
+              if (!inst) return null;
+              return (
+                <>
+                  <div className="p-4 bg-muted/50 rounded-lg space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Loan</span>
+                      <span className="font-medium">{loan.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Installment</span>
+                      <span className="font-medium">#{inst.installmentNo}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Due Date</span>
+                      <span className="font-medium">{formatDate(inst.dueDate)}</span>
+                    </div>
+                    <div className="border-t pt-2 flex justify-between">
+                      <span className="text-muted-foreground">Total Payment</span>
+                      <span className="font-bold">{formatCurrency(Number(inst.totalPayment))}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Principal</span>
+                      <span>{formatCurrency(Number(inst.principalPortion))}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Interest</span>
+                      <span>{formatCurrency(Number(inst.interestPortion))}</span>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() =>
+                      payInstallment?.mutate({
+                        loanId: selectedLoanId,
+                        installmentNo: selectedInstallmentNo,
+                      })
+                    }
+                    className="w-full"
+                    disabled={payInstallment?.isPending}
+                  >
+                    {payInstallment?.isPending ? "Processing..." : `Pay ${formatCurrency(Number(inst.totalPayment))}`}
+                  </Button>
+                </>
+              );
+            })()}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -8,8 +8,8 @@ export const transactionRouter = router({
         accountId: z.string().optional(),
         categoryId: z.string().optional(),
         type: z.enum(["INCOME", "EXPENSE", "TRANSFER"]).optional(),
-        dateFrom: z.date().optional(),
-        dateTo: z.date().optional(),
+        dateFrom: z.coerce.date().optional(),
+        dateTo: z.coerce.date().optional(),
         search: z.string().optional(),
         minAmount: z.number().optional(),
         maxAmount: z.number().optional(),
@@ -89,7 +89,7 @@ export const transactionRouter = router({
         amount: z.number().positive(),
         description: z.string().min(1),
         note: z.string().optional(),
-        date: z.date().default(() => new Date()),
+        date: z.coerce.date().default(() => new Date()),
         creditCardId: z.string().optional(),
         subscriptionId: z.string().optional(),
         tagIds: z.array(z.string()).optional(),
@@ -149,7 +149,7 @@ export const transactionRouter = router({
         amount: z.number().positive().optional(),
         description: z.string().min(1).optional(),
         note: z.string().optional(),
-        date: z.date().optional(),
+        date: z.coerce.date().optional(),
         tagIds: z.array(z.string()).optional(),
       })
     )

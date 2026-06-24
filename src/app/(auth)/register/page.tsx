@@ -83,7 +83,7 @@ export default function RegisterPage() {
               {error}
             </div>
           )}
-          <div className="space-y-2">
+          <div className="space-y-2" suppressHydrationWarning>
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
@@ -91,9 +91,10 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              suppressHydrationWarning
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2" suppressHydrationWarning>
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -102,9 +103,10 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              suppressHydrationWarning
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2" suppressHydrationWarning>
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -113,9 +115,10 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              suppressHydrationWarning
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2" suppressHydrationWarning>
             <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
               id="confirmPassword"
@@ -124,6 +127,7 @@ export default function RegisterPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              suppressHydrationWarning
             />
           </div>
         </CardContent>

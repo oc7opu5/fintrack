@@ -88,7 +88,7 @@ export const loanRouter = router({
         principalAmount: z.number().positive(),
         interestRate: z.number().min(0),
         totalInstallments: z.number().positive(),
-        startDate: z.date(),
+        startDate: z.coerce.date(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -140,7 +140,7 @@ export const loanRouter = router({
         loanId: z.string(),
         installmentNo: z.number(),
         amount: z.number().positive().optional(),
-        paymentDate: z.date().optional(),
+        paymentDate: z.coerce.date().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

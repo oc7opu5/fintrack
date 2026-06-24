@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { ArrowLeftRight, Plus, Send, TrendingUp, TrendingDown, Sparkles, CreditCard, AlertCircle } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default function TransactionsPage() {
@@ -32,6 +32,7 @@ export default function TransactionsPage() {
   const [manualTransaction, setManualTransaction] = useState({
     accountId: "",
     categoryId: "",
+    creditCardId: "",
     type: "EXPENSE" as "INCOME" | "EXPENSE",
     amount: 0,
     description: "",
@@ -42,6 +43,7 @@ export default function TransactionsPage() {
   const utils = trpc.useUtils();
   const { data: accounts } = trpc.account.list.useQuery();
   const { data: categories } = trpc.category.list.useQuery();
+  const { data: creditCards } = trpc.creditCard.list.useQuery();
   const { data: transactionsData, isLoading } = trpc.transaction.list.useQuery({
     page: 1,
     limit: 50,
@@ -50,12 +52,15 @@ export default function TransactionsPage() {
   const createTransaction = trpc.transaction.create.useMutation({
     onSuccess: () => {
       utils.transaction.list.invalidate();
+      utils.account.list.invalidate();
+      utils.creditCard.list.invalidate();
       setIsManualDialogOpen(false);
       setChatInput("");
       setParseResult(null);
       setManualTransaction({
         accountId: "",
         categoryId: "",
+        creditCardId: "",
         type: "EXPENSE",
         amount: 0,
         description: "",
@@ -63,15 +68,18 @@ export default function TransactionsPage() {
         date: new Date().toISOString().split("T")[0],
       });
     },
-  });
+    onError: (error: Error) => {
+      console.error("Failed to create transaction:", error.message);
+    },
+  } as any);
 
   const parseMutation = trpc.ai.parse.useMutation({
-    onSuccess: (result) => {
+    onSuccess: (result: any) => {
       if (result.success && result.transaction) {
         setParseResult(result);
       }
     },
-  });
+  } as any);
 
   const handleChatSubmit = () => {
     if (!chatInput.trim()) return;
@@ -100,12 +108,42 @@ export default function TransactionsPage() {
     });
   };
 
+  const [formError, setFormError] = useState("");
+
   const handleManualSubmit = () => {
-    if (!manualTransaction.accountId || !manualTransaction.description) return;
+    setFormError("");
+    if (!manualTransaction.accountId) {
+      setFormError("Please select an account");
+      return;
+    }
+    if (!manualTransaction.description.trim()) {
+      setFormError("Please enter a description");
+      return;
+    }
+    if (!manualTransaction.amount || manualTransaction.amount <= 0) {
+      setFormError("Please enter a valid amount");
+      return;
+    }
     createTransaction.mutate({
       ...manualTransaction,
+      categoryId: manualTransaction.categoryId || undefined,
+      creditCardId: manualTransaction.creditCardId || undefined,
       date: new Date(manualTransaction.date),
     });
+  };
+
+  const resetManualForm = () => {
+    setManualTransaction({
+      accountId: "",
+      categoryId: "",
+      creditCardId: "",
+      type: "EXPENSE",
+      amount: 0,
+      description: "",
+      note: "",
+      date: new Date().toISOString().split("T")[0],
+    });
+    setFormError("");
   };
 
   return (
@@ -220,7 +258,10 @@ export default function TransactionsPage() {
 
       {/* Manual Entry Dialog */}
       <div className="flex justify-end">
-        <Dialog open={isManualDialogOpen} onOpenChange={setIsManualDialogOpen}>
+        <Dialog open={isManualDialogOpen} onOpenChange={(open) => {
+          setIsManualDialogOpen(open);
+          if (!open) resetManualForm();
+        }}>
           <DialogTrigger asChild>
             <Button variant="outline">
               <Plus className="w-4 h-4 mr-2" />
@@ -232,13 +273,19 @@ export default function TransactionsPage() {
               <DialogTitle>Add Transaction</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
+              {formError && (
+                <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+                  <AlertCircle className="w-4 h-4" />
+                  {formError}
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Type</Label>
                   <Select
                     value={manualTransaction.type}
                     onValueChange={(value: "INCOME" | "EXPENSE") =>
-                      setManualTransaction({ ...manualTransaction, type: value })
+                      setManualTransaction({ ...manualTransaction, type: value, creditCardId: "" })
                     }
                   >
                     <SelectTrigger>
@@ -281,18 +328,69 @@ export default function TransactionsPage() {
                   </Select>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Input
-                  placeholder="What was this for?"
-                  value={manualTransaction.description}
-                  onChange={(e) =>
-                    setManualTransaction({
-                      ...manualTransaction,
-                      description: e.target.value,
-                    })
-                  }
-                />
+              {manualTransaction.type === "EXPENSE" && creditCards && creditCards.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Charge to Credit Card (optional)</Label>
+                  <Select
+                    value={manualTransaction.creditCardId}
+                    onValueChange={(value) =>
+                      setManualTransaction({ ...manualTransaction, creditCardId: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="None - regular expense" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">None - regular expense</SelectItem>
+                      {creditCards.map((card) => (
+                        <SelectItem key={card.id} value={card.id}>
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="w-3 h-3" />
+                            {card.name}
+                            <span className="text-muted-foreground">
+                              ({formatCurrency(Number(card.availableCredit))} available)
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Category</Label>
+                  <Select
+                    value={manualTransaction.categoryId}
+                    onValueChange={(value) =>
+                      setManualTransaction({ ...manualTransaction, categoryId: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.icon} {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Date</Label>
+                  <Input
+                    type="date"
+                    value={manualTransaction.date}
+                    onChange={(e) =>
+                      setManualTransaction({
+                        ...manualTransaction,
+                        date: e.target.value,
+                      })
+                    }
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -310,26 +408,26 @@ export default function TransactionsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Date</Label>
+                  <Label>Note (optional)</Label>
                   <Input
-                    type="date"
-                    value={manualTransaction.date}
+                    placeholder="Additional notes"
+                    value={manualTransaction.note}
                     onChange={(e) =>
-                      setManualTransaction({
-                        ...manualTransaction,
-                        date: e.target.value,
-                      })
+                      setManualTransaction({ ...manualTransaction, note: e.target.value })
                     }
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Note (optional)</Label>
-                <Textarea
-                  placeholder="Additional notes..."
-                  value={manualTransaction.note}
+                <Label>Description</Label>
+                <Input
+                  placeholder="What was this for?"
+                  value={manualTransaction.description}
                   onChange={(e) =>
-                    setManualTransaction({ ...manualTransaction, note: e.target.value })
+                    setManualTransaction({
+                      ...manualTransaction,
+                      description: e.target.value,
+                    })
                   }
                 />
               </div>

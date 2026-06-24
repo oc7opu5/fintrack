@@ -93,8 +93,8 @@ export const budgetRouter = router({
         amount: z.number().positive(),
         categoryId: z.string().optional(),
         period: z.enum(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]).default("MONTHLY"),
-        startDate: z.date(),
-        endDate: z.date().optional(),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date().optional(),
         alertAt: z.number().min(1).max(100).default(80),
         notes: z.string().optional(),
       })

@@ -50,7 +50,7 @@ export const subscriptionRouter = router({
         description: z.string().optional(),
         category: z.string().optional(),
         website: z.string().optional(),
-        startDate: z.date(),
+        startDate: z.coerce.date(),
         status: z
           .enum(["ACTIVE", "PAUSED", "CANCELLED", "LIFETIME"])
           .optional(),
