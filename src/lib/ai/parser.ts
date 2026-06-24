@@ -30,7 +30,7 @@ function parseSingleTransaction(
 
   // Detect type - "spent" and similar words always mean expense
   const isExpense =
-    /\b(spent|paid|bought|purchased|cost|expense|lunch|dinner|breakfast|groceries|uber|taxi|food|rent|bill|subscription|deal|charge|fee)\b/i.test(
+    /\b(spent|paid|bought|purchased|cost|expense|lunch|dinner|breakfast|groceries|uber|taxi|food|rent|bill|subscription|deal|charge|fee|snack|ride)\b/i.test(
       normalizedInput
     );
   const isIncome =
@@ -48,13 +48,31 @@ function parseSingleTransaction(
 
   if (amount === 0) return null;
 
-  // Extract description
-  let description = normalizedInput
-    .replace(/\$|€|£|৳|bdt|taka|tk/gi, "")
-    .replace(/spent|paid|bought|earned|received|got|on|for|from|via|through|with|worth|expense|income|charge|fee/gi, "")
-    .replace(/\d+(?:,\d{3})*(?:\.\d{1,2})?/, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  // Smart description extraction
+  let description = "";
+  
+  // Try to find meaningful description after removing noise words
+  const noisePatterns = [
+    /\b(spent|paid|bought|earned|received|got|on|for|from|via|through|with|worth|expense|income|charge|fee|a|the|an)\b/gi,
+    /\$|€|£|৳|bdt|taka|tk/gi,
+    /\d+(?:,\d{3})*(?:\.\d{1,2})?/g,
+  ];
+
+  let cleaned = input;
+  for (const pattern of noisePatterns) {
+    cleaned = cleaned.replace(pattern, " ");
+  }
+  
+  // Extract key nouns from cleaned text
+  const words = cleaned.split(/\s+/).filter(w => w.length > 2);
+  
+  // Build description from meaningful words
+  const stopWords = new Set(["the", "and", "with", "for", "from", "via", "through", "was", "were", "has", "had"]);
+  const meaningfulWords = words.filter(w => !stopWords.has(w.toLowerCase()));
+  
+  if (meaningfulWords.length > 0) {
+    description = meaningfulWords.slice(0, 4).join(" ");
+  }
 
   if (!description) {
     description = type === "INCOME" ? "Income" : "Expense";
@@ -81,24 +99,26 @@ function parseSingleTransaction(
     }
   }
 
-  // Match category
-  const categoryKeywords: Record<string, string[]> = {
-    "Food & Dining": ["lunch", "dinner", "breakfast", "food", "meal", "snack", "restaurant", "cafe", "coffee"],
-    Transportation: ["uber", "taxi", "bus", "train", "fuel", "gas", "parking", "transport", "ride"],
-    Shopping: ["bought", "shopping", "store", "mall", "online", "purchase"],
-    "Bills & Utilities": ["bill", "electricity", "water", "internet", "phone", "recharge"],
-    Entertainment: ["movie", "netflix", "spotify", "game", "entertainment"],
-    Healthcare: ["doctor", "medicine", "hospital", "pharmacy", "health"],
-    Education: ["book", "course", "tuition", "education", "learning"],
-    Subscriptions: ["subscription", "monthly", "yearly", "plan", "deal", "lifetime"],
-    Salary: ["salary", "wage", "pay"],
-    Freelance: ["freelance", "client", "project", "contract"],
-    "Other Income": ["bonus", "got", "win", "prize", "refund", "cashback"],
-  };
-
+  // Match category - check specific patterns first, then general
   let matchedCategory: string | undefined;
-  for (const [category, keywords] of Object.entries(categoryKeywords)) {
-    if (keywords.some((k) => normalizedInput.includes(k))) {
+  
+  // Priority order: check more specific patterns first
+  const categoryPatterns: Array<[string, RegExp]> = [
+    ["Subscriptions", /\b(subscription|lifetime|deal|monthly|yearly|plan)\b/i],
+    ["Food & Dining", /\b(lunch|dinner|breakfast|food|meal|snack|restaurant|cafe|coffee)\b/i],
+    ["Transportation", /\b(uber|taxi|bus|train|fuel|gas|parking|transport|ride|ride-sharing)\b/i],
+    ["Shopping", /\b(bought|shopping|store|mall|online|purchase)\b/i],
+    ["Bills & Utilities", /\b(bill|electricity|water|internet|phone|recharge)\b/i],
+    ["Entertainment", /\b(movie|netflix|spotify|game|entertainment)\b/i],
+    ["Healthcare", /\b(doctor|medicine|hospital|pharmacy|health)\b/i],
+    ["Education", /\b(book|course|tuition|education|learning)\b/i],
+    ["Salary", /\b(salary|wage|pay)\b/i],
+    ["Freelance", /\b(freelance|client|project|contract)\b/i],
+    ["Other Income", /\b(bonus|got|win|prize|refund|cashback)\b/i],
+  ];
+
+  for (const [category, pattern] of categoryPatterns) {
+    if (pattern.test(normalizedInput)) {
       matchedCategory = categories.find((c) =>
         c.toLowerCase().includes(category.toLowerCase())
       );
