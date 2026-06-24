@@ -108,6 +108,19 @@ async function fetchOpenRouterModels(apiKey: string): Promise<string[]> {
   } catch { return []; }
 }
 
+async function fetchOpenCodeZenModels(apiKey: string): Promise<string[]> {
+  try {
+    const baseUrl = "https://api.opencodezen.com/v1";
+    const res = await fetch(`${baseUrl}/models`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const data = await res.json();
+    return data.data?.map((m: any) => m.id).sort() || [];
+  } catch {
+    return ["zen-flash", "zen-pro", "zen-lite", "claude-3-haiku", "gpt-4o-mini", "llama-3.1-8b"];
+  }
+}
+
 const providers: ProviderConfig[] = [
   {
     id: "openai",
@@ -175,6 +188,16 @@ const providers: ProviderConfig[] = [
     docsUrl: "https://openrouter.ai/keys",
     freeTier: "Many free models",
     fetchModels: fetchOpenRouterModels,
+  },
+  {
+    id: "opencode-zen",
+    name: "OpenCode Zen",
+    description: "Curated models, tested by OpenCode team",
+    envKey: "OPENCODE_ZEN_API_KEY",
+    models: ["zen-flash", "zen-pro", "zen-lite"],
+    docsUrl: "https://opencode.ai",
+    freeTier: "Free tier available",
+    fetchModels: fetchOpenCodeZenModels,
   },
   {
     id: "ollama",

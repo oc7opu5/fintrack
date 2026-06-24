@@ -10,6 +10,28 @@ export function createOpenCodeZenProvider(): AIProvider {
 
 registerProvider("OPENCODE_ZEN_API_KEY", createOpenCodeZenProvider);
 
+// Fetch available models from OpenCode Zen
+export async function fetchOpenCodeZenModels(apiKey: string): Promise<string[]> {
+  try {
+    const baseUrl = process.env.OPENCODE_ZEN_BASE_URL || "https://api.opencodezen.com/v1";
+    const res = await fetch(`${baseUrl}/models`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const data = await res.json();
+    return data.data?.map((m: any) => m.id).sort() || [];
+  } catch {
+    // Default models if API doesn't support model listing
+    return [
+      "zen-flash",
+      "zen-pro",
+      "zen-lite",
+      "claude-3-haiku",
+      "gpt-4o-mini",
+      "llama-3.1-8b",
+    ];
+  }
+}
+
 async function parseWithOpenCodeZen(
   input: string,
   categories: string[],
@@ -24,7 +46,7 @@ async function parseWithOpenCodeZen(
       success: false,
       error: "OpenCode Zen API key not configured",
       provider: "opencode-zen",
-      model: "zen-flash",
+      model: process.env.OPENCODE_ZEN_MODEL || "zen-flash",
       latencyMs: Date.now() - startTime,
     };
   }

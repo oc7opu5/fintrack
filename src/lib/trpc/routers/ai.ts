@@ -147,6 +147,7 @@ export const aiRouter = router({
         { envKey: "GOOGLE_AI_API_KEY", model: "gemini-1.5-flash", name: "gemini" },
         { envKey: "DEEPSEEK_API_KEY", model: "deepseek-chat", name: "deepseek" },
         { envKey: "MISTRAL_API_KEY", model: "mistral-small-latest", name: "mistral" },
+        { envKey: "OPENCODE_ZEN_API_KEY", model: process.env.OPENCODE_ZEN_MODEL || "zen-flash", name: "opencode-zen" },
       ];
 
       for (const provider of providers) {
@@ -201,7 +202,7 @@ export const aiRouter = router({
             const data = await response.json();
             content = data.candidates?.[0]?.content?.parts?.[0]?.text;
           } else {
-            // OpenAI-compatible (OpenAI, Groq, DeepSeek, Mistral, OpenRouter)
+            // OpenAI-compatible (OpenAI, Groq, DeepSeek, Mistral, OpenRouter, OpenCode Zen)
             const baseUrl =
               provider.name === "openai"
                 ? "https://api.openai.com/v1"
@@ -211,6 +212,8 @@ export const aiRouter = router({
                 ? "https://api.deepseek.com/v1"
                 : provider.name === "mistral"
                 ? "https://api.mistral.ai/v1"
+                : provider.name === "opencode-zen"
+                ? process.env.OPENCODE_ZEN_BASE_URL || "https://api.opencodezen.com/v1"
                 : "https://openrouter.ai/api/v1";
 
             response = await fetch(`${baseUrl}/chat/completions`, {
