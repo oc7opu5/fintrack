@@ -68,30 +68,26 @@ export const aiRouter = router({
     const apiKeys = (settings?.apiKeys as Record<string, string>) || {};
     const fetchedModels = (settings as any)?.fetchedModels || {};
 
-    const providers: Record<string, { name: string; models: string[] }> = {};
-
-    const providerDefaults: Record<string, { name: string; models: string[] }> = {
-      openai: { name: "OpenAI", models: ["gpt-4o-mini", "gpt-4o"] },
-      anthropic: { name: "Anthropic", models: ["claude-3-5-haiku-20241022", "claude-3-5-sonnet-20241022"] },
-      gemini: { name: "Gemini", models: ["gemini-1.5-flash", "gemini-1.5-pro"] },
-      groq: { name: "Groq", models: ["llama-3.1-8b-instant", "llama-3.1-70b-versatile"] },
-      deepseek: { name: "DeepSeek", models: ["deepseek-chat", "deepseek-reasoner"] },
-      mistral: { name: "Mistral", models: ["mistral-small-latest"] },
-      "opencode-zen": { name: "OpenCode Zen", models: ["deepseek-v4-flash-free", "deepseek-v4-flash", "gpt-5.4-mini", "claude-haiku-4-5"] },
-      openrouter: { name: "OpenRouter", models: ["meta-llama/llama-3.1-8b-instruct:free"] },
+    const allProviders: Record<string, { name: string; models: string[]; hasKey: boolean }> = {
+      openai: { name: "OpenAI", models: ["gpt-4o-mini", "gpt-4o"], hasKey: !!apiKeys.openai },
+      anthropic: { name: "Anthropic", models: ["claude-3-5-haiku-20241022", "claude-3-5-sonnet-20241022"], hasKey: !!apiKeys.anthropic },
+      gemini: { name: "Gemini", models: ["gemini-1.5-flash", "gemini-1.5-pro"], hasKey: !!apiKeys.gemini },
+      groq: { name: "Groq", models: ["llama-3.1-8b-instant", "llama-3.1-70b-versatile"], hasKey: !!apiKeys.groq },
+      deepseek: { name: "DeepSeek", models: ["deepseek-chat", "deepseek-reasoner"], hasKey: !!apiKeys.deepseek },
+      mistral: { name: "Mistral", models: ["mistral-small-latest"], hasKey: !!apiKeys.mistral },
+      "opencode-zen": { name: "OpenCode Zen", models: ["deepseek-v4-flash-free", "deepseek-v4-flash", "gpt-5.4-mini"], hasKey: !!apiKeys["opencode-zen"] },
+      openrouter: { name: "OpenRouter", models: ["meta-llama/llama-3.1-8b-instruct:free"], hasKey: !!apiKeys.openrouter },
     };
 
-    for (const [id, defaults] of Object.entries(providerDefaults)) {
-      if (apiKeys[id]) {
-        providers[id] = {
-          name: defaults.name,
-          models: fetchedModels[id]?.length ? fetchedModels[id] : defaults.models,
-        };
+    // Override with fetched models if available
+    for (const [id, provider] of Object.entries(allProviders)) {
+      if (fetchedModels[id]?.length) {
+        provider.models = fetchedModels[id];
       }
     }
 
     return {
-      providers,
+      providers: allProviders,
       activeProvider: settings?.activeProvider || "",
       activeModel: settings?.activeModel || "",
     };
@@ -221,7 +217,9 @@ export const aiRouter = router({
             });
             if (!res.ok) {
               const errBody = await res.text();
-              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 100)}`);
+              let errMsg = `${res.status}`;
+              try { const errJson = JSON.parse(errBody); errMsg += ` - ${errJson.error?.message || errBody.substring(0, 150)}`; } catch { errMsg += ` - ${errBody.substring(0, 150)}`; }
+              errors.push(`${provider.id}: ${errMsg}`);
               continue;
             }
             const data = await res.json();
@@ -240,7 +238,9 @@ export const aiRouter = router({
             });
             if (!res.ok) {
               const errBody = await res.text();
-              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 100)}`);
+              let errMsg = `${res.status}`;
+              try { const errJson = JSON.parse(errBody); errMsg += ` - ${errJson.error?.message || errBody.substring(0, 150)}`; } catch { errMsg += ` - ${errBody.substring(0, 150)}`; }
+              errors.push(`${provider.id}: ${errMsg}`);
               continue;
             }
             const data = await res.json();
@@ -253,18 +253,15 @@ export const aiRouter = router({
             });
             if (!res.ok) {
               const errBody = await res.text();
-              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 200)}`);
+              let errMsg = `${res.status}`;
+              try { const errJson = JSON.parse(errBody); errMsg += ` - ${errJson.error?.message || errJson.message || errBody.substring(0, 150)}`; } catch { errMsg += ` - ${errBody.substring(0, 150)}`; }
+              errors.push(`${provider.id}: ${errMsg}`);
               continue;
             }
             const data = await res.json();
-            // Debug: log full response structure
             content = data.choices?.[0]?.message?.content || "";
             if (!content && data.error) {
-              errors.push(`${provider.id}: API error - ${JSON.stringify(data.error).substring(0, 200)}`);
-              continue;
-            }
-            if (!content && !data.choices?.length) {
-              errors.push(`${provider.id}: no choices in response - ${JSON.stringify(data).substring(0, 200)}`);
+              errors.push(`${provider.id}: ${data.error.message || JSON.stringify(data.error).substring(0, 150)}`);
               continue;
             }
           }

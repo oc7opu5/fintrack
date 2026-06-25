@@ -188,7 +188,7 @@ export default function ChatPage() {
     });
   };
 
-  const availableProviders: Record<string, { name: string; models: string[] }> = (modelsData as any)?.providers || {};
+  const availableProviders: Record<string, { name: string; models: string[]; hasKey?: boolean }> = (modelsData as any)?.providers || {};
 
   const formatMessage = (content: string) => {
     return content.split("\n").map((line, i) => {
@@ -220,20 +220,22 @@ export default function ChatPage() {
                 const models = availableProviders[v]?.models || [];
                 handleModelChange(v, models[0] || "");
               }}>
-                <SelectTrigger className="w-[130px]">
-                  <SelectValue placeholder="Provider" />
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Select Provider" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(availableProviders).map(([id, p]) => (
-                    <SelectItem key={id} value={id}>{p.name}</SelectItem>
+                    <SelectItem key={id} value={id}>
+                      {p.name} {p.hasKey ? "✓" : "(no key)"}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
               {selectedProvider && availableProviders[selectedProvider] && (
                 <Select value={selectedModel} onValueChange={(v) => handleModelChange(selectedProvider, v)}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Model" />
+                  <SelectTrigger className="w-[220px]">
+                    <SelectValue placeholder="Select Model" />
                   </SelectTrigger>
                   <SelectContent>
                     {availableProviders[selectedProvider].models.map((m) => (
