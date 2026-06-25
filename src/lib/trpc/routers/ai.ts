@@ -233,8 +233,8 @@ export const aiRouter = router({
       const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
 
-      const [accounts, transactions, subscriptions, thisMonthIncome, thisMonthExpense, lastMonth] = await Promise.all([
-        ctx.db.account.findMany({ where: { userId: ctx.session.user.id, isActive: true }, select: { name: true, type: true, balance: true } }),
+      const [accounts, transactions, subscriptions, categories, thisMonthIncome, thisMonthExpense, lastMonth] = await Promise.all([
+        ctx.db.account.findMany({ where: { userId: ctx.session.user.id, isActive: true }, select: { name: true, type: true, balance: true, isDefault: true } }),
         ctx.db.transaction.findMany({
           where: { userId: ctx.session.user.id },
           include: { category: true, account: true },
@@ -242,6 +242,7 @@ export const aiRouter = router({
           take: 50,
         }),
         ctx.db.subscription.findMany({ where: { userId: ctx.session.user.id, status: "ACTIVE" }, select: { name: true, amount: true, billingCycle: true } }),
+        ctx.db.category.findMany({ where: { userId: ctx.session.user.id }, select: { name: true, type: true } }),
         ctx.db.transaction.aggregate({
           where: { userId: ctx.session.user.id, type: "INCOME", date: { gte: thisMonthStart, lte: thisMonthEnd } },
           _sum: { amount: true },
@@ -257,7 +258,7 @@ export const aiRouter = router({
       ]);
 
       const financialContext = truncateContext(buildFinancialContext({
-        accounts: accounts.map((a) => ({ name: a.name, type: a.type, balance: Number(a.balance) })),
+        accounts: accounts.map((a) => ({ name: a.name, type: a.type, balance: Number(a.balance), isDefault: a.isDefault })),
         transactions: transactions.map((t) => ({
           description: t.description,
           amount: Number(t.amount),
@@ -267,6 +268,7 @@ export const aiRouter = router({
           account: t.account ? { name: t.account.name } : null,
         })),
         subscriptions: subscriptions.map((s) => ({ name: s.name, amount: Number(s.amount), billingCycle: s.billingCycle })),
+        categories: categories.map((c) => ({ name: c.name, type: c.type })),
         monthlyIncome: Number(thisMonthIncome._sum.amount || 0),
         monthlyExpense: Number(thisMonthExpense._sum.amount || 0),
         previousMonthExpense: Number(lastMonth._sum.amount || 0),
