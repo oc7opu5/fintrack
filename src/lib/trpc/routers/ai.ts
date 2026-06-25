@@ -8,6 +8,116 @@ import {
   FINANCIAL_ASSISTANT_SYSTEM_PROMPT,
 } from "@/lib/ai/service";
 
+// Parse action blocks from AI response
+function parseActions(response: string): { cleanResponse: string; actions: Array<{ type: string; data: any }> } {
+  const actions: Array<{ type: string; data: any }> = [];
+  let cleanResponse = response;
+
+  const actionRegex = /\[ACTION:(\w+)\]\s*\n([\s\S]*?)\n\[\/ACTION\]/g;
+  let match;
+
+  while ((match = actionRegex.exec(response)) !== null) {
+    const actionType = match[1];
+    try {
+      const actionData = JSON.parse(match[2].trim());
+      actions.push({ type: actionType, data: actionData });
+    } catch (e) {
+      console.warn("Failed to parse action:", match[2]);
+    }
+    cleanResponse = cleanResponse.replace(match[0], "").trim();
+  }
+
+  return { cleanResponse, actions };
+}
+
+// Execute transaction actions
+async function executeActions(
+  actions: Array<{ type: string; data: any }>,
+  userId: string,
+  db: any
+): Promise<string[]> {
+  const results: string[] = [];
+
+  for (const action of actions) {
+    try {
+      if (action.type === "ADD") {
+        const { type, amount, description, category, account, date } = action.data;
+
+        // Find account
+        const accounts = await db.account.findMany({
+          where: { userId, isActive: true },
+        });
+        const matchedAccount = accounts.find((a: any) =>
+          a.name.toLowerCase().includes((account || "").toLowerCase())
+        ) || accounts.find((a: any) => a.isDefault) || accounts[0];
+
+        if (!matchedAccount) {
+          results.push("Could not find matching account");
+          continue;
+        }
+
+        // Find category
+        const categories = await db.category.findMany({ where: { userId } });
+        const matchedCategory = categories.find((c: any) =>
+          c.name.toLowerCase().includes((category || "").toLowerCase())
+        );
+
+        // Create transaction
+        const tx = await db.transaction.create({
+          data: {
+            userId,
+            accountId: matchedAccount.id,
+            categoryId: matchedCategory?.id,
+            type: type || "EXPENSE",
+            amount: amount || 0,
+            description: description || "Transaction from chat",
+            date: date ? new Date(date) : new Date(),
+          },
+        });
+
+        // Update account balance
+        const balanceChange = type === "INCOME" ? amount : -amount;
+        await db.account.update({
+          where: { id: matchedAccount.id },
+          data: { balance: { increment: balanceChange } },
+        });
+
+        results.push(`Added ${type || "EXPENSE"}: ${description} ৳${amount} (${matchedAccount.name})`);
+      } else if (action.type === "DELETE") {
+        const { description } = action.data;
+
+        // Find matching transaction
+        const tx = await db.transaction.findFirst({
+          where: {
+            userId,
+            description: { contains: description, mode: "insensitive" },
+          },
+          orderBy: { date: "desc" },
+        });
+
+        if (!tx) {
+          results.push(`Could not find transaction matching "${description}"`);
+          continue;
+        }
+
+        // Reverse balance
+        const balanceEffect = tx.type === "INCOME" ? -Number(tx.amount) : Number(tx.amount);
+        await db.account.update({
+          where: { id: tx.accountId },
+          data: { balance: { increment: balanceEffect } },
+        });
+
+        await db.transaction.delete({ where: { id: tx.id } });
+        results.push(`Deleted: ${tx.description} ৳${Number(tx.amount)}`);
+      }
+    } catch (error) {
+      results.push(`Failed: ${error instanceof Error ? error.message : "unknown error"}`);
+    }
+  }
+
+  return results;
+}
+
 export const aiRouter = router({
   parse: protectedProcedure
     .input(z.object({ input: z.string().min(1) }))
@@ -267,13 +377,25 @@ export const aiRouter = router({
           }
 
           if (content) {
+            // Parse actions from response
+            const { cleanResponse, actions } = parseActions(content);
+            let finalResponse = cleanResponse;
+
+            // Execute any transaction actions
+            if (actions.length > 0) {
+              const actionResults = await executeActions(actions, ctx.session.user.id, ctx.db);
+              if (actionResults.length > 0) {
+                finalResponse += "\n\n---\n**Actions performed:**\n" + actionResults.map((r) => `- ${r}`).join("\n");
+              }
+            }
+
             await ctx.db.chatMessage.create({
-              data: { userId: ctx.session.user.id, role: "assistant", content, provider: provider.id, model },
+              data: { userId: ctx.session.user.id, role: "assistant", content: finalResponse, provider: provider.id, model },
             });
 
             return {
               success: true,
-              response: content,
+              response: finalResponse,
               provider: provider.id,
               model,
               latencyMs: Date.now() - startTime,
@@ -318,8 +440,19 @@ export const aiRouter = router({
         accountCount: accounts.length,
       });
 
+      // Parse actions from local response too
+      const { cleanResponse: cleanLocal, actions: localActions } = parseActions(localResponse);
+      let finalLocalResponse = cleanLocal;
+
+      if (localActions.length > 0) {
+        const actionResults = await executeActions(localActions, ctx.session.user.id, ctx.db);
+        if (actionResults.length > 0) {
+          finalLocalResponse += "\n\n---\n**Actions performed:**\n" + actionResults.map((r) => `- ${r}`).join("\n");
+        }
+      }
+
       await ctx.db.chatMessage.create({
-        data: { userId: ctx.session.user.id, role: "assistant", content: localResponse, provider: "local", model: "fallback" },
+        data: { userId: ctx.session.user.id, role: "assistant", content: finalLocalResponse, provider: "local", model: "fallback" },
       });
 
       return {
@@ -343,6 +476,38 @@ function generateLocalResponse(message: string, data: {
   const savingsRate = data.monthlyIncome > 0
     ? Math.round(((data.monthlyIncome - data.monthlyExpense) / data.monthlyIncome) * 100)
     : 0;
+
+  // Handle transaction add requests
+  if (lower.includes("add") && (lower.includes("transaction") || lower.includes("expense") || lower.includes("income"))) {
+    const amountMatch = message.match(/(\d+(?:,\d{3})*(?:\.\d{2})?)/);
+    const amount = amountMatch ? parseFloat(amountMatch[1].replace(/,/g, "")) : 0;
+
+    if (amount > 0) {
+      const type = /\b(earned|received|salary|income)\b/i.test(lower) ? "INCOME" : "EXPENSE";
+      const descMatch = message.match(/(?:for|on|called?|named?)\s+(.+?)(?:\s+(?:via|through|using|from)\s+|$)/i);
+      const description = descMatch?.[1]?.trim() || "Transaction from chat";
+      const accountMatch = message.match(/(?:via|through|using|from)\s+(.+?)$/i);
+      const account = accountMatch?.[1]?.trim();
+
+      return `[ACTION:ADD]
+{"type":"${type}","amount":${amount},"description":"${description}","account":"${account || ""}"}
+[/ACTION]
+
+I'll add that ${type.toLowerCase()} for you: ${description} - ৳${amount.toLocaleString()}.`;
+    }
+  }
+
+  // Handle transaction delete requests
+  if (lower.includes("delete") || lower.includes("remove")) {
+    const descMatch = message.match(/(?:delete|remove)\s+(.+?)(?:\s+transaction|$)/i);
+    if (descMatch) {
+      return `[ACTION:DELETE]
+{"description":"${descMatch[1].trim()}"}
+[/ACTION]
+
+I'll remove that transaction for you.`;
+    }
+  }
 
   if (lower.includes("balance") || lower.includes("net worth")) {
     return `Your total balance is ৳${data.totalBalance.toLocaleString()} across ${data.accountCount} accounts.`;

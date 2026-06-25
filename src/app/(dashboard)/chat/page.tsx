@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc/client";
+import ReactMarkdown from "react-markdown";
 import {
   Bot,
   Send,
@@ -31,6 +32,10 @@ import {
   BarChart3,
   ToggleLeft,
   ToggleRight,
+  Paperclip,
+  X,
+  Image,
+  FileText,
 } from "lucide-react";
 
 interface Message {
@@ -57,6 +62,11 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [aiOnlyMode, setAiOnlyMode] = useState<boolean>(true);
+  const [attachedFiles, setAttachedFiles] = useState<{ name: string; type: string; content: string }[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
@@ -74,11 +84,6 @@ export default function ChatPage() {
   });
   const { data: aiSettings } = trpc.aiSettings.get.useQuery();
 
-  const [selectedProvider, setSelectedProvider] = useState<string>("");
-  const [selectedModel, setSelectedModel] = useState<string>("");
-  const [aiOnlyMode, setAiOnlyMode] = useState<boolean>(true);
-
-  // Load history
   useEffect(() => {
     if (history && messages.length === 0) {
       setMessages(history.map((m) => ({
@@ -92,7 +97,6 @@ export default function ChatPage() {
     }
   }, [history]);
 
-  // Load settings
   useEffect(() => {
     const md = modelsData as any;
     if (md) {
@@ -100,39 +104,73 @@ export default function ChatPage() {
       setSelectedModel(md.activeModel || "");
     }
     const s = aiSettings as any;
-    if (s) {
-      setAiOnlyMode(s.preferences?.disableLocalFallback ?? true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (s) setAiOnlyMode(s.preferences?.disableLocalFallback ?? true);
   }, [JSON.stringify(modelsData), JSON.stringify(aiSettings)]);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleFileAttach = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    for (const file of Array.from(files)) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} is too large (max 5MB)`);
+        continue;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const content = reader.result as string;
+        setAttachedFiles((prev) => [...prev, { name: file.name, type: file.type, content }]);
+      };
+
+      if (file.type.startsWith("text/") || file.type === "application/json" || file.name.endsWith(".csv")) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsDataURL(file);
+      }
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  const removeAttachment = (index: number) => {
+    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSend = (text?: string) => {
     const msg = text || input.trim();
     if (!msg || chatMutation.isPending) return;
 
+    let fullMessage = msg;
+    if (attachedFiles.length > 0) {
+      const fileContext = attachedFiles.map((f) => {
+        if (f.type.startsWith("image/")) {
+          return `[Attached image: ${f.name}]`;
+        }
+        return `[Attached file: ${f.name}]\n${f.content.substring(0, 2000)}`;
+      }).join("\n\n");
+      fullMessage = `${msg}\n\n---\nAttached files:\n${fileContext}`;
+    }
+
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       role: "user",
-      content: msg,
+      content: msg + (attachedFiles.length > 0 ? ` (${attachedFiles.length} file(s) attached)` : ""),
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setAttachedFiles([]);
 
     chatMutation.mutate(
-      { message: msg },
+      { message: fullMessage },
       {
         onSuccess: (result) => {
-          const assistantMessage: Message = {
+          setMessages((prev) => [...prev, {
             id: `assistant-${Date.now()}`,
             role: "assistant",
             content: result.success ? result.response : result.response || "Sorry, I couldn't process that.",
@@ -141,8 +179,7 @@ export default function ChatPage() {
             latencyMs: result.latencyMs,
             timestamp: new Date(),
             isError: !result.success,
-          };
-          setMessages((prev) => [...prev, assistantMessage]);
+          }]);
         },
         onError: (error) => {
           setMessages((prev) => [...prev, {
@@ -159,12 +196,9 @@ export default function ChatPage() {
 
   const handleRetry = (failedMessage: Message) => {
     const idx = messages.findIndex((m) => m.id === failedMessage.id);
-    if (idx > 0) {
-      const prevUserMsg = messages[idx - 1];
-      if (prevUserMsg.role === "user") {
-        setMessages((prev) => prev.filter((m) => m.id !== failedMessage.id));
-        handleSend(prevUserMsg.content);
-      }
+    if (idx > 0 && messages[idx - 1]?.role === "user") {
+      setMessages((prev) => prev.filter((m) => m.id !== failedMessage.id));
+      handleSend(messages[idx - 1].content);
     }
   };
 
@@ -190,18 +224,6 @@ export default function ChatPage() {
 
   const availableProviders: Record<string, { name: string; models: string[]; hasKey?: boolean }> = (modelsData as any)?.providers || {};
 
-  const formatMessage = (content: string) => {
-    return content.split("\n").map((line, i) => {
-      if (line.startsWith("- ")) {
-        return <li key={i} className="ml-4 list-disc">{line.slice(2)}</li>;
-      }
-      if (line.startsWith("═")) {
-        return <div key={i} className="font-bold mt-2">{line}</div>;
-      }
-      return <span key={i}>{line}<br /></span>;
-    });
-  };
-
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       {/* Header */}
@@ -213,7 +235,6 @@ export default function ChatPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Model Selector */}
           {Object.keys(availableProviders).length > 0 && (
             <>
               <Select value={selectedProvider} onValueChange={(v) => {
@@ -225,13 +246,10 @@ export default function ChatPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(availableProviders).map(([id, p]) => (
-                    <SelectItem key={id} value={id}>
-                      {p.name} {p.hasKey ? "✓" : "(no key)"}
-                    </SelectItem>
+                    <SelectItem key={id} value={id}>{p.name} {p.hasKey ? "✓" : ""}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-
               {selectedProvider && availableProviders[selectedProvider] && (
                 <Select value={selectedModel} onValueChange={(v) => handleModelChange(selectedProvider, v)}>
                   <SelectTrigger className="w-[220px]">
@@ -246,12 +264,10 @@ export default function ChatPage() {
               )}
             </>
           )}
-
           <Button variant={aiOnlyMode ? "default" : "outline"} size="sm" onClick={toggleAiOnly} className="gap-1">
             {aiOnlyMode ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
             {aiOnlyMode ? "AI Only" : "AI + Local"}
           </Button>
-
           {messages.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => clearMutation.mutate()} disabled={clearMutation.isPending}>
               <Trash2 className="w-4 h-4" />
@@ -270,9 +286,7 @@ export default function ChatPage() {
               </div>
               <div>
                 <h2 className="text-xl font-semibold">Hi! I'm your AI financial assistant</h2>
-                <p className="text-muted-foreground mt-1">
-                  Ask me anything about your finances.
-                </p>
+                <p className="text-muted-foreground mt-1">Ask me anything about your finances.</p>
               </div>
               <div className="grid grid-cols-2 gap-2 max-w-md">
                 {SUGGESTIONS.map((s) => (
@@ -300,7 +314,36 @@ export default function ChatPage() {
                   : "bg-muted"
               }`}>
                 {message.isError && <AlertCircle className="w-4 h-4 text-destructive mb-1" />}
-                <div className="text-sm whitespace-pre-wrap">{formatMessage(message.content)}</div>
+                {message.role === "assistant" ? (
+                  <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-sm font-bold mb-1">{children}</h3>,
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc ml-4 mb-2">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal ml-4 mb-2">{children}</ol>,
+                        li: ({ children }) => <li className="mb-1">{children}</li>,
+                        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                        code: ({ children, className }) => {
+                          const isInline = !className;
+                          return isInline
+                            ? <code className="bg-muted-foreground/20 px-1 py-0.5 rounded text-xs">{children}</code>
+                            : <code className="block bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto">{children}</code>;
+                        },
+                        pre: ({ children }) => <pre className="bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto mb-2">{children}</pre>,
+                        table: ({ children }) => <table className="border-collapse border border-border text-xs mb-2">{children}</table>,
+                        th: ({ children }) => <th className="border border-border px-2 py-1 font-bold">{children}</th>,
+                        td: ({ children }) => <td className="border border-border px-2 py-1">{children}</td>,
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <div className="text-sm whitespace-pre-wrap">{message.content}</div>
+                )}
                 <div className="flex items-center justify-between mt-2 gap-2">
                   <div className="flex items-center gap-2">
                     <p className={`text-xs ${message.role === "user" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
@@ -350,8 +393,35 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </CardContent>
 
+        {/* Attached Files */}
+        {attachedFiles.length > 0 && (
+          <div className="px-4 pb-2 flex flex-wrap gap-2">
+            {attachedFiles.map((file, i) => (
+              <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                {file.type.startsWith("image/") ? <Image className="w-3 h-3" /> : <FileText className="w-3 h-3" />}
+                {file.name}
+                <button onClick={() => removeAttachment(i)} className="ml-1 hover:text-destructive">
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Input */}
         <div className="p-4 border-t">
           <div className="flex gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              multiple
+              accept=".txt,.csv,.json,.md,.pdf,image/*"
+              onChange={handleFileAttach}
+            />
+            <Button variant="outline" size="icon" onClick={() => fileInputRef.current?.click()}>
+              <Paperclip className="w-4 h-4" />
+            </Button>
             <Input
               placeholder="Ask about your finances..."
               value={input}
