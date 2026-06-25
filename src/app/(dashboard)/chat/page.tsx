@@ -30,6 +30,8 @@ import {
   CreditCard,
   BarChart3,
   Settings,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
 
 interface Message {
@@ -80,6 +82,7 @@ export default function ChatPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
+  const [aiOnlyMode, setAiOnlyMode] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
@@ -214,6 +217,22 @@ export default function ChatPage() {
     updateSettingsMutation.mutate({ activeProvider: provider, activeModel: model });
   };
 
+  const toggleAiOnly = () => {
+    const newValue = !aiOnlyMode;
+    setAiOnlyMode(newValue);
+    updateSettingsMutation.mutate({
+      preferences: { autoParse: true, showConfidence: true, enableChat: true, disableLocalFallback: newValue },
+    });
+  };
+
+  // Load AI-only preference
+  useEffect(() => {
+    if (aiSettings) {
+      const s = aiSettings as any;
+      setAiOnlyMode(s.preferences?.disableLocalFallback ?? true);
+    }
+  }, [aiSettings]);
+
   const availableProviders = Object.keys(PROVIDER_MODELS).filter((p) => {
     const s = aiSettings as any;
     return s?.apiKeys?.[p]; // Only show providers with saved keys
@@ -272,6 +291,17 @@ export default function ChatPage() {
               )}
             </div>
           )}
+
+          {/* AI Only Toggle */}
+          <Button
+            variant={aiOnlyMode ? "default" : "outline"}
+            size="sm"
+            onClick={toggleAiOnly}
+            className="gap-1"
+          >
+            {aiOnlyMode ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
+            {aiOnlyMode ? "AI Only" : "AI + Local"}
+          </Button>
 
           <Badge variant="secondary">
             <Sparkles className="w-3 h-3 mr-1" />

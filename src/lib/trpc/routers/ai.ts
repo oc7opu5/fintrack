@@ -242,6 +242,18 @@ export const aiRouter = router({
         }
       }
 
+      // Check if local fallback is disabled
+      const preferences = (aiSettings?.preferences as any) || {};
+      if (preferences.disableLocalFallback) {
+        return {
+          success: false,
+          response: "No AI provider configured. Please add an API key in AI Settings.",
+          provider: "none",
+          model: "none",
+          latencyMs: Date.now() - startTime,
+        };
+      }
+
       // Local fallback
       const localResponse = generateLocalResponse(input.message, {
         totalBalance: accounts.reduce((s, a) => s + Number(a.balance), 0),

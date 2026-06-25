@@ -11,6 +11,7 @@ const aiSettingsSchema = z.object({
     autoParse: z.boolean().optional(),
     showConfidence: z.boolean().optional(),
     enableChat: z.boolean().optional(),
+    disableLocalFallback: z.boolean().optional(),
   }).optional(),
 });
 
