@@ -96,8 +96,8 @@ export default function AISettingsPage() {
   };
 
   const handleSave = () => {
-    // Merge new API keys with existing
-    const mergedKeys: Record<string, string> = { ...(settings?.apiKeysRaw as Record<string, string> || {}) };
+    // Merge new API keys with existing (masked keys stay as-is)
+    const mergedKeys: Record<string, string> = {};
     for (const [provider, key] of Object.entries(apiKeysInput)) {
       if (key) {
         mergedKeys[provider] = key;

@@ -76,6 +76,7 @@ model User {
   tags            Tag[]
   aiParseLogs     AIParseLog[]
   aiSettings      AISettings?
+  chatMessages    ChatMessage[]
 
   @@map("users")
 }
@@ -364,4 +365,20 @@ model AISettings {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("ai_settings")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // "user" or "assistant"
+  content   String
+  provider  String?
+  model     String?
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("chat_messages")
 }

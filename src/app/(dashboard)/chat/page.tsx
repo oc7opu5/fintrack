@@ -13,6 +13,15 @@ import {
   Sparkles,
   Loader2,
   AlertCircle,
+  Trash2,
+  RefreshCw,
+  Copy,
+  Check,
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+  CreditCard,
+  BarChart3,
 } from "lucide-react";
 
 interface Message {
@@ -27,28 +36,44 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  "How much did I spend this month?",
-  "What are my top expense categories?",
-  "Am I saving enough?",
-  "Review my subscriptions",
-  "Show my spending trend",
-  "Tips to save money",
+  { text: "How much did I spend this month?", icon: TrendingDown },
+  { text: "What are my top expenses?", icon: BarChart3 },
+  { text: "Am I saving enough?", icon: TrendingUp },
+  { text: "Review my subscriptions", icon: CreditCard },
+  { text: "Show my account balances", icon: Wallet },
+  { text: "Give me financial advice", icon: Sparkles },
 ];
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content:
-        "Hi! I'm your AI financial assistant. I can analyze your actual financial data and provide personalized advice. What would you like to know?",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const utils = trpc.useUtils();
+  const { data: history } = trpc.ai.getHistory.useQuery({ limit: 50 });
   const chatMutation = trpc.ai.chat.useMutation();
+  const clearMutation = trpc.ai.clearHistory.useMutation({
+    onSuccess: () => {
+      setMessages([]);
+      utils.ai.getHistory.invalidate();
+    },
+  });
+
+  // Load history on mount
+  useEffect(() => {
+    if (history && messages.length === 0) {
+      const loaded = history.map((m) => ({
+        id: m.id,
+        role: m.role as "user" | "assistant",
+        content: m.content,
+        provider: m.provider || undefined,
+        model: m.model || undefined,
+        timestamp: new Date(m.createdAt),
+      }));
+      setMessages(loaded);
+    }
+  }, [history]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -58,13 +83,14 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = () => {
-    if (!input.trim() || chatMutation.isPending) return;
+  const handleSend = (text?: string) => {
+    const msg = text || input.trim();
+    if (!msg || chatMutation.isPending) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}`,
       role: "user",
-      content: input,
+      content: msg,
       timestamp: new Date(),
     };
 
@@ -72,15 +98,13 @@ export default function ChatPage() {
     setInput("");
 
     chatMutation.mutate(
-      { message: input },
+      { message: msg },
       {
         onSuccess: (result) => {
           const assistantMessage: Message = {
-            id: (Date.now() + 1).toString(),
+            id: `assistant-${Date.now()}`,
             role: "assistant",
-            content: result.success
-              ? result.response
-              : "Sorry, I couldn't process that request.",
+            content: result.success ? result.response : "Sorry, I couldn't process that.",
             provider: result.provider,
             model: result.model,
             latencyMs: result.latencyMs,
@@ -91,9 +115,9 @@ export default function ChatPage() {
         },
         onError: (error) => {
           const errorMessage: Message = {
-            id: (Date.now() + 1).toString(),
+            id: `error-${Date.now()}`,
             role: "assistant",
-            content: `Error: ${error.message}`,
+            content: `Error: ${error.message}. Please try again.`,
             timestamp: new Date(),
             isError: true,
           };
@@ -103,8 +127,40 @@ export default function ChatPage() {
     );
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setInput(suggestion);
+  const handleRetry = (failedMessage: Message) => {
+    // Find the user message before the failed one
+    const idx = messages.findIndex((m) => m.id === failedMessage.id);
+    if (idx > 0) {
+      const prevUserMsg = messages[idx - 1];
+      if (prevUserMsg.role === "user") {
+        // Remove failed message and retry
+        setMessages((prev) => prev.filter((m) => m.id !== failedMessage.id));
+        handleSend(prevUserMsg.content);
+      }
+    }
+  };
+
+  const handleCopy = (content: string, id: string) => {
+    navigator.clipboard.writeText(content);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const formatMessage = (content: string) => {
+    // Simple markdown-like formatting
+    return content
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\n\n/g, "\n")
+      .split("\n")
+      .map((line, i) => {
+        if (line.startsWith("- ")) {
+          return <li key={i} className="ml-4">{line.slice(2)}</li>;
+        }
+        if (line.includes(":") && line.startsWith("═")) {
+          return <div key={i} className="font-bold mt-2">{line}</div>;
+        }
+        return <span key={i}>{line}<br /></span>;
+      });
   };
 
   return (
@@ -114,27 +170,64 @@ export default function ChatPage() {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Bot className="w-6 h-6" />
-            AI Assistant
+            AI Financial Assistant
           </h1>
           <p className="text-muted-foreground">
-            Analyzes your real financial data
+            Analyzes your real financial data • Powered by AI
           </p>
         </div>
-        <Badge variant="secondary">
-          <Sparkles className="w-3 h-3 mr-1" />
-          AI Powered
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary">
+            <Sparkles className="w-3 h-3 mr-1" />
+            {messages.length} messages
+          </Badge>
+          {messages.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => clearMutation.mutate()}
+              disabled={clearMutation.isPending}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Chat Area */}
       <Card className="flex-1 flex flex-col overflow-hidden">
         <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Bot className="w-8 h-8 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Hi! I'm your AI financial assistant</h2>
+                <p className="text-muted-foreground mt-1">
+                  I can analyze your spending, track subscriptions, and give personalized advice.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 max-w-md">
+                {SUGGESTIONS.map((s) => (
+                  <Button
+                    key={s.text}
+                    variant="outline"
+                    className="justify-start h-auto py-3 text-left"
+                    onClick={() => handleSend(s.text)}
+                  >
+                    <s.icon className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="text-xs">{s.text}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex gap-3 ${
-                message.role === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {message.role === "assistant" && (
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -142,7 +235,7 @@ export default function ChatPage() {
                 </div>
               )}
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-[85%] rounded-lg p-3 ${
                   message.role === "user"
                     ? "bg-primary text-primary-foreground"
                     : message.isError
@@ -150,29 +243,41 @@ export default function ChatPage() {
                     : "bg-muted"
                 }`}
               >
-                {message.isError && (
-                  <AlertCircle className="w-4 h-4 text-destructive mb-1" />
-                )}
-                <p className="whitespace-pre-wrap text-sm">{message.content}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <p
-                    className={`text-xs ${
-                      message.role === "user"
-                        ? "text-primary-foreground/70"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    {message.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                  {message.provider && message.provider !== "local" && (
-                    <p className="text-xs text-muted-foreground">
-                      via {message.provider}/{message.model}
-                      {message.latencyMs && ` (${message.latencyMs}ms)`}
+                {message.isError && <AlertCircle className="w-4 h-4 text-destructive mb-1" />}
+                <div className="text-sm whitespace-pre-wrap">{formatMessage(message.content)}</div>
+                <div className="flex items-center justify-between mt-2 gap-2">
+                  <div className="flex items-center gap-2">
+                    <p className={`text-xs ${message.role === "user" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                      {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </p>
-                  )}
+                    {message.provider && message.provider !== "local" && (
+                      <Badge variant="outline" className="text-xs py-0">
+                        {message.provider}/{message.model}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {message.role === "assistant" && !message.isError && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => handleCopy(message.content, message.id)}
+                      >
+                        {copiedId === message.id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      </Button>
+                    )}
+                    {message.isError && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs"
+                        onClick={() => handleRetry(message)}
+                      >
+                        <RefreshCw className="w-3 h-3 mr-1" /> Retry
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
               {message.role === "user" && (
@@ -188,34 +293,15 @@ export default function ChatPage() {
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-primary" />
               </div>
-              <div className="bg-muted rounded-lg p-3">
+              <div className="bg-muted rounded-lg p-3 flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm text-muted-foreground">Thinking...</span>
               </div>
             </div>
           )}
 
           <div ref={messagesEndRef} />
         </CardContent>
-
-        {/* Suggestions */}
-        {messages.length <= 2 && (
-          <div className="px-4 pb-2">
-            <p className="text-xs text-muted-foreground mb-2">Try asking:</p>
-            <div className="flex flex-wrap gap-2">
-              {SUGGESTIONS.map((s) => (
-                <Button
-                  key={s}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleSuggestionClick(s)}
-                  className="text-xs"
-                >
-                  {s}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Input */}
         <div className="p-4 border-t">
@@ -225,16 +311,14 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !chatMutation.isPending) {
+                if (e.key === "Enter" && !e.shiftKey && !chatMutation.isPending) {
+                  e.preventDefault();
                   handleSend();
                 }
               }}
               disabled={chatMutation.isPending}
             />
-            <Button
-              onClick={handleSend}
-              disabled={!input.trim() || chatMutation.isPending}
-            >
+            <Button onClick={() => handleSend()} disabled={!input.trim() || chatMutation.isPending}>
               <Send className="w-4 h-4" />
             </Button>
           </div>

@@ -45,7 +45,7 @@ export const aiSettingsRouter = router({
     return {
       ...settings,
       apiKeys: maskedKeys,
-      apiKeysRaw: keys, // Only for server-side use
+      // apiKeysRaw NOT sent to client - only used server-side
     };
   }),
 
