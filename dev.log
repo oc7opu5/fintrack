@@ -670,3 +670,1573 @@
  GET /transactions 200 in 117ms (next.js: 39ms, application-code: 78ms)
  GET /chat 200 in 155ms (next.js: 64ms, application-code: 91ms)
  GET /transactions 200 in 55ms (next.js: 14ms, application-code: 41ms)
+ GET /chat 200 in 272ms (next.js: 5ms, application-code: 267ms)
+ GET /api/auth/session 200 in 337ms (next.js: 94ms, application-code: 244ms)
+ GET /api/auth/session 200 in 25ms (next.js: 5ms, application-code: 19ms)
+ GET /api/trpc/ai.getHistory,ai.getModels,aiSettings.get?batch=1&input=%7B%220%22%3A%7B%22limit%22%3A50%7D%7D 200 in 408ms (next.js: 183ms, application-code: 225ms)
+ GET /api/auth/session 200 in 140ms (next.js: 8ms, application-code: 132ms)
+[AI Chat] Trying opencode-zen with model mimo-v2.5-free, key starts with: sk-CILVN...
+ POST /api/trpc/ai.chat?batch=1 200 in 8.4s (next.js: 9ms, application-code: 8.4s)
+ GET /subscriptions 200 in 125ms (next.js: 23ms, application-code: 102ms)
+ GET /api/auth/session 200 in 63ms (next.js: 16ms, application-code: 47ms)
+ GET /api/trpc/subscription.list,subscription.summary?batch=1&input=%7B%220%22%3A%7B%22status%22%3A%22ACTIVE%22%7D%7D 200 in 54ms (next.js: 17ms, application-code: 37ms)
+ GET /api/auth/session 200 in 61ms (next.js: 29ms, application-code: 32ms)
+ GET /api/auth/session 200 in 41ms (next.js: 15ms, application-code: 26ms)
+ GET /api/auth/session 200 in 74ms (next.js: 19ms, application-code: 55ms)
+ GET /subscriptions 200 in 79ms (next.js: 5ms, application-code: 74ms)
+ GET /api/auth/session 200 in 24ms (next.js: 12ms, application-code: 12ms)
+ GET /api/trpc/subscription.list,subscription.summary?batch=1&input=%7B%220%22%3A%7B%22status%22%3A%22ACTIVE%22%7D%7D 200 in 112ms (next.js: 18ms, application-code: 95ms)
+ GET /api/auth/session 200 in 58ms (next.js: 10ms, application-code: 48ms)
+ GET /api/auth/session 200 in 25ms (next.js: 6ms, application-code: 19ms)
+ GET /api/auth/session 200 in 23ms (next.js: 5ms, application-code: 17ms)
+ GET /api/auth/session 200 in 45ms (next.js: 15ms, application-code: 30ms)
+ GET /api/trpc/ai.getHistory,ai.getModels,aiSettings.get?batch=1&input=%7B%220%22%3A%7B%22limit%22%3A50%7D%7D 200 in 36ms (next.js: 9ms, application-code: 27ms)
+ GET /api/auth/session 200 in 18ms (next.js: 4ms, application-code: 14ms)
+ GET /api/auth/session 200 in 26ms (next.js: 7ms, application-code: 19ms)
+ GET /api/auth/session 200 in 18ms (next.js: 5ms, application-code: 13ms)
+[AI Chat] Trying opencode-zen with model mimo-v2.5-free, key starts with: sk-CILVN...
+ POST /api/trpc/ai.chat?batch=1 200 in 10.5s (next.js: 13ms, application-code: 10.5s)
+ GET /api/auth/session 200 in 53ms (next.js: 16ms, application-code: 37ms)
+ GET /api/trpc/subscription.list,subscription.summary?batch=1&input=%7B%220%22%3A%7B%22status%22%3A%22ACTIVE%22%7D%7D 200 in 35ms (next.js: 10ms, application-code: 25ms)
+ GET /api/auth/session 200 in 16ms (next.js: 3ms, application-code: 13ms)
+ GET /api/auth/session 200 in 24ms (next.js: 4ms, application-code: 21ms)
+ GET /api/auth/session 200 in 17ms (next.js: 3ms, application-code: 14ms)
+ GET /subscriptions 200 in 102ms (next.js: 6ms, application-code: 96ms)
+ GET /api/auth/session 200 in 55ms (next.js: 15ms, application-code: 41ms)
+ GET /api/trpc/subscription.list,subscription.summary?batch=1&input=%7B%220%22%3A%7B%22status%22%3A%22ACTIVE%22%7D%7D 200 in 62ms (next.js: 31ms, application-code: 31ms)
+ GET /api/auth/session 200 in 30ms (next.js: 12ms, application-code: 18ms)
+ GET /api/auth/session 200 in 17ms (next.js: 5ms, application-code: 12ms)
+ GET /api/auth/session 200 in 16ms (next.js: 3ms, application-code: 14ms)
+ GET /subscriptions 200 in 86ms (next.js: 6ms, application-code: 80ms)
+ GET /subscriptions 200 in 164ms (next.js: 12ms, application-code: 153ms)
+ GET /subscriptions 200 in 180ms (next.js: 12ms, application-code: 167ms)
+ GET /subscriptions 200 in 132ms (next.js: 16ms, application-code: 116ms)
+ GET /subscriptions 200 in 114ms (next.js: 11ms, application-code: 103ms)
+ GET /api/auth/session 200 in 53ms (next.js: 15ms, application-code: 38ms)
+ GET /api/trpc/subscription.list,subscription.summary?batch=1&input=%7B%220%22%3A%7B%22status%22%3A%22ACTIVE%22%7D%7D 200 in 37ms (next.js: 11ms, application-code: 26ms)
+ GET /api/auth/session 200 in 59ms (next.js: 11ms, application-code: 48ms)
+ GET /api/auth/session 200 in 46ms (next.js: 12ms, application-code: 34ms)
+ GET /api/auth/session 200 in 22ms (next.js: 4ms, application-code: 18ms)
+ GET /api/trpc/subscription.list?batch=1&input=%7B%220%22%3A%7B%22status%22%3A%22ALL%22%7D%7D 200 in 38ms (next.js: 10ms, application-code: 28ms)
+⨯ Failed to generate static paths for /api/trpc/[trpc]:
+
+thread 'tokio-runtime-worker' (28472) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope", global_name: "next_napi_bindings::next_api::project::get_source_map_rope", .. }, this: None, arg: (Vc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "node:fs") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000840.meta
+    1: Unable to open static sorted file 00000836.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000836.sst
+    3: The system cannot find the file specified. (os error 2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope", global_name: "next_napi_bindings::next_api::project::get_source_map_rope", .. }, this: None, arg: (Vc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "node:internal/process/task_queues") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000767.meta
+    1: Unable to open static sorted file 00000763.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000763.sst
+    3: The system cannot find the file specified. (os error 2)
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope", global_name: "next_napi_bindings::next_api::project::get_source_map_rope", .. }, this: None, arg: (Vc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "node:internal/timers") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001338.meta
+    1: Unable to open static sorted file 00001336.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001336.sst
+    3: The system cannot find the file specified. (os error 2)
+Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\build-manifest.json'
+    at ignore-listed frames {
+  type: 'Error',
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (26448) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Administrator\AppData\Local\Temp\next-panic-e4b57ff1c1b77772168cb7bcb6e1c5d.log.
+
+To help make Turbopack better, report this error by ]8;;https://bugs.nextjs.org/search?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20lookup%20task%20ids%3A%20Looking%20up%20task%20id%20for%20CachedTaskType%20%7B%20native_fn%3A%20NativeFunction%20%7B%20name%3A%20%22get_written_endpoint_with_issues_operation%22%2C%20global_name%3A%20%22next_napi_bindings%3A%3Anext_api%3A%3Aendpoint%3A%3Aget_written_endpoint_with_issues_operation%22%2C%20..%20%7D%2C%20this%3A%20None%2C%20arg%3A%20%28OperationVc%20%7B%20node%3A%20RawVc%3A%3ATaskOutput%28604%29%20%7D%2C%29%20%7D%20from%20database%20failed&body=Turbopack%20version%3A%20%60f37fad94%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0AFailed%20to%20lookup%20task%20ids%3A%20Looking%20up%20task%20id%20for%20CachedTaskType%20%7B%20native_fn%3A%20NativeFunction%20%7B%20name%3A%20%22get_written_endpoint_with_issues_operation%22%2C%20global_name%3A%20%22next_napi_bindings%3A%3Anext_api%3A%3Aendpoint%3A%3Aget_written_endpoint_with_issues_operation%22%2C%20..%20%7D%2C%20this%3A%20None%2C%20arg%3A%20%28OperationVc%20%7B%20node%3A%20RawVc%3A%3ATaskOutput%28604%29%20%7D%2C%29%20%7D%20from%20database%20failed%0A%0ADebug%20info%3A%0A-%20Failed%20to%20lookup%20task%20ids%3A%20Looking%20up%20task%20id%20for%20CachedTaskType%20%7B%20native_fn%3A%20NativeFunction%20%7B%20name%3A%20%22get_written_endpoint_with_issues_operation%22%2C%20global_name%3A%20%22next_napi_bindings%3A%3Anext_api%3A%3Aendpoint%3A%3Aget_written_endpoint_with_issues_operation%22%2C%20..%20%7D%2C%20this%3A%20None%2C%20arg%3A%20%28OperationVc%20%7B%20node%3A%20RawVc%3A%3ATaskOutput%28604%29%20%7D%2C%29%20%7D%20from%20database%20failed%0A%20%20%0A%20%20Caused%20by%3A%0A%20%20%20%20%20%200%3A%20Unable%20to%20open%20static%20sorted%20file%20referenced%20from%2000000257.meta%0A%20%20%20%20%20%201%3A%20Unable%20to%20open%20static%20sorted%20file%2000000255.sst%0A%20%20%20%20%20%202%3A%20Failed%20to%20open%20SST%20file%20C%3A%5CUsers%5CAdministrator%5Cfintrack%5C.next%5Cdev%5Ccache%2Fturbopack%5Cf37fad94%5C00000255.sst%0A%20%20%20%20%20%203%3A%20The%20system%20cannot%20find%20the%20path%20specified.%20%28os%20error%203%29%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace\clicking here.]8;;\
+-----
+
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+⨯ Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+⨯ Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Administrator\AppData\Local\Temp\next-panic-e4b57ff1c1b77772168cb7bcb6e1c5d.log.
+
+To help make Turbopack better, report this error by ]8;;https://bugs.nextjs.org/search?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20lookup%20task%20ids%3A%20Looking%20up%20task%20id%20for%20CachedTaskType%20%7B%20native_fn%3A%20NativeFunction%20%7B%20name%3A%20%22get_written_endpoint_with_issues_operation%22%2C%20global_name%3A%20%22next_napi_bindings%3A%3Anext_api%3A%3Aendpoint%3A%3Aget_written_endpoint_with_issues_operation%22%2C%20..%20%7D%2C%20this%3A%20None%2C%20arg%3A%20%28OperationVc%20%7B%20node%3A%20RawVc%3A%3ATaskOutput%28604%29%20%7D%2C%29%20%7D%20from%20database%20failed&body=Turbopack%20version%3A%20%60f37fad94%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0AFailed%20to%20lookup%20task%20ids%3A%20Looking%20up%20task%20id%20for%20CachedTaskType%20%7B%20native_fn%3A%20NativeFunction%20%7B%20name%3A%20%22get_written_endpoint_with_issues_operation%22%2C%20global_name%3A%20%22next_napi_bindings%3A%3Anext_api%3A%3Aendpoint%3A%3Aget_written_endpoint_with_issues_operation%22%2C%20..%20%7D%2C%20this%3A%20None%2C%20arg%3A%20%28OperationVc%20%7B%20node%3A%20RawVc%3A%3ATaskOutput%28604%29%20%7D%2C%29%20%7D%20from%20database%20failed%0A%0ADebug%20info%3A%0A-%20Failed%20to%20lookup%20task%20ids%3A%20Looking%20up%20task%20id%20for%20CachedTaskType%20%7B%20native_fn%3A%20NativeFunction%20%7B%20name%3A%20%22get_written_endpoint_with_issues_operation%22%2C%20global_name%3A%20%22next_napi_bindings%3A%3Anext_api%3A%3Aendpoint%3A%3Aget_written_endpoint_with_issues_operation%22%2C%20..%20%7D%2C%20this%3A%20None%2C%20arg%3A%20%28OperationVc%20%7B%20node%3A%20RawVc%3A%3ATaskOutput%28604%29%20%7D%2C%29%20%7D%20from%20database%20failed%0A%20%20%0A%20%20Caused%20by%3A%0A%20%20%20%20%20%200%3A%20Unable%20to%20open%20static%20sorted%20file%20referenced%20from%2000000257.meta%0A%20%20%20%20%20%201%3A%20Unable%20to%20open%20static%20sorted%20file%2000000255.sst%0A%20%20%20%20%20%202%3A%20Failed%20to%20open%20SST%20file%20C%3A%5CUsers%5CAdministrator%5Cfintrack%5C.next%5Cdev%5Ccache%2Fturbopack%5Cf37fad94%5C00000255.sst%0A%20%20%20%20%20%203%3A%20The%20system%20cannot%20find%20the%20path%20specified.%20%28os%20error%203%29%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace\clicking here.]8;;\
+-----
+
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+⨯ Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\fintrack\.next\dev\server\app\api\trpc\[trpc]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\fintrack\\.next\\dev\\server\\app\\api\\trpc\\[trpc]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+⨯ Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (26448) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00000257.meta
+    1: Unable to open static sorted file 00000255.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+    3: The system cannot find the path specified. (os error 3)
+
+thread '<unnamed>' (6268) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:619:14:
+Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_source_map_rope_operation", global_name: "next_napi_bindings::next_api::project::get_source_map_rope_operation", .. }, this: None, arg: (ResolvedVc(RawVc::TaskCell(1, "next_api::project::ProjectContainer#0")), "TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: \"get_written_endpoint_with_issues_operation\", global_name: \"next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation\", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed") } from database failed
+
+Caused by:
+    0: Unable to open static sorted file referenced from 00001372.meta
+    1: Unable to open static sorted file 00001370.sst
+    2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001370.sst
+    3: The system cannot find the path specified. (os error 3)
+Error [TurbopackInternalError]: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+
+Debug info:
+- Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed
+  
+  Caused by:
+      0: Unable to open static sorted file referenced from 00000257.meta
+      1: Unable to open static sorted file 00000255.sst
+      2: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00000255.sst
+      3: The system cannot find the path specified. (os error 3)
+    at <unknown> (TurbopackInternalError: Failed to lookup task ids: Looking up task id for CachedTaskType { native_fn: NativeFunction { name: "get_written_endpoint_with_issues_operation", global_name: "next_napi_bindings::next_api::endpoint::get_written_endpoint_with_issues_operation", .. }, this: None, arg: (OperationVc { node: RawVc::TaskOutput(604) },) } from database failed) {
+  location: 'turbopack\\crates\\turbo-tasks-backend\\src\\backend\\operation\\mod.rs:619:14'
+}
+
+thread 'tokio-runtime-worker' (26968) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 18234)
+
+Caused by:
+    0: Looking up task storage for TaskId 18234 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (28472) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 9 tasks
+
+Caused by:
+    0: Looking up typed data for 9 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001955.meta
+    2: Unable to open static sorted file 00001951.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001951.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (26448) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 23 tasks
+
+Caused by:
+    0: Looking up typed data for 23 tasks from database failed
+    1: Unable to open static sorted file referenced from 00002259.meta
+    2: Unable to open static sorted file 00002255.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002255.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 29 tasks
+
+Caused by:
+    0: Looking up typed data for 29 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 17 tasks
+
+Caused by:
+    0: Looking up typed data for 17 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (26968) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 18234)
+
+Caused by:
+    0: Looking up task storage for TaskId 18234 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 29 tasks
+
+Caused by:
+    0: Looking up typed data for 29 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (30984) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 17 tasks
+
+Caused by:
+    0: Looking up typed data for 17 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (28472) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 9 tasks
+
+Caused by:
+    0: Looking up typed data for 9 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001955.meta
+    2: Unable to open static sorted file 00001951.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001951.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (26448) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 23 tasks
+
+Caused by:
+    0: Looking up typed data for 23 tasks from database failed
+    1: Unable to open static sorted file referenced from 00002259.meta
+    2: Unable to open static sorted file 00002255.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002255.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (28664) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 11 tasks
+
+Caused by:
+    0: Looking up typed data for 11 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (28664) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 11 tasks
+
+Caused by:
+    0: Looking up typed data for 11 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (28664) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13353)
+
+Caused by:
+    0: Looking up task storage for TaskId 13353 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (28664) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13356)
+
+Caused by:
+    0: Looking up task storage for TaskId 13356 from database failed
+    1: Unable to open static sorted file referenced from 00002223.meta
+    2: Unable to open static sorted file 00002219.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002219.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14715)
+
+Caused by:
+    0: Looking up task storage for TaskId 14715 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14719)
+
+Caused by:
+    0: Looking up task storage for TaskId 14719 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 18234)
+
+Caused by:
+    0: Looking up task storage for TaskId 18234 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14801)
+
+Caused by:
+    0: Looking up task storage for TaskId 14801 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14803)
+
+Caused by:
+    0: Looking up task storage for TaskId 14803 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 5 tasks
+
+Caused by:
+    0: Looking up typed data for 5 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001955.meta
+    2: Unable to open static sorted file 00001951.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001951.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 12255)
+
+Caused by:
+    0: Looking up task storage for TaskId 12255 from database failed
+    1: Unable to open static sorted file referenced from 00001968.meta
+    2: Unable to open static sorted file 00001962.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001962.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 12235)
+
+Caused by:
+    0: Looking up task storage for TaskId 12235 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00002223.meta
+    2: Unable to open static sorted file 00002219.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002219.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16498)
+
+Caused by:
+    0: Looking up task storage for TaskId 16498 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16459)
+
+Caused by:
+    0: Looking up task storage for TaskId 16459 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15518)
+
+Caused by:
+    0: Looking up task storage for TaskId 15518 from database failed
+    1: Unable to open static sorted file referenced from 00002223.meta
+    2: Unable to open static sorted file 00002219.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002219.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16422)
+
+Caused by:
+    0: Looking up task storage for TaskId 16422 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14778)
+
+Caused by:
+    0: Looking up task storage for TaskId 14778 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15201)
+
+Caused by:
+    0: Looking up task storage for TaskId 15201 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16798)
+
+Caused by:
+    0: Looking up task storage for TaskId 16798 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001564.meta
+    2: Unable to open static sorted file 00001558.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001558.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15222)
+
+Caused by:
+    0: Looking up task storage for TaskId 15222 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16421)
+
+Caused by:
+    0: Looking up task storage for TaskId 16421 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15429)
+
+Caused by:
+    0: Looking up task storage for TaskId 15429 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16201)
+
+Caused by:
+    0: Looking up task storage for TaskId 16201 from database failed
+    1: Unable to open static sorted file referenced from 00002301.meta
+    2: Unable to open static sorted file 00002296.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002296.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15258)
+
+Caused by:
+    0: Looking up task storage for TaskId 15258 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13011)
+
+Caused by:
+    0: Looking up task storage for TaskId 13011 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15474)
+
+Caused by:
+    0: Looking up task storage for TaskId 15474 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15213)
+
+Caused by:
+    0: Looking up task storage for TaskId 15213 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14023)
+
+Caused by:
+    0: Looking up task storage for TaskId 14023 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13143)
+
+Caused by:
+    0: Looking up task storage for TaskId 13143 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14094)
+
+Caused by:
+    0: Looking up task storage for TaskId 14094 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14005)
+
+Caused by:
+    0: Looking up task storage for TaskId 14005 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001961.meta
+    2: Unable to open static sorted file 00001956.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001956.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14039)
+
+Caused by:
+    0: Looking up task storage for TaskId 14039 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14033)
+
+Caused by:
+    0: Looking up task storage for TaskId 14033 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 12596)
+
+Caused by:
+    0: Looking up task storage for TaskId 12596 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00002301.meta
+    2: Unable to open static sorted file 00002296.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00002296.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13176)
+
+Caused by:
+    0: Looking up task storage for TaskId 13176 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13249)
+
+Caused by:
+    0: Looking up task storage for TaskId 13249 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 17143)
+
+Caused by:
+    0: Looking up task storage for TaskId 17143 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14693)
+
+Caused by:
+    0: Looking up task storage for TaskId 14693 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16052)
+
+Caused by:
+    0: Looking up task storage for TaskId 16052 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13250)
+
+Caused by:
+    0: Looking up task storage for TaskId 13250 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13258)
+
+Caused by:
+    0: Looking up task storage for TaskId 13258 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16704)
+
+Caused by:
+    0: Looking up task storage for TaskId 16704 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16688)
+
+Caused by:
+    0: Looking up task storage for TaskId 16688 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16056)
+
+Caused by:
+    0: Looking up task storage for TaskId 16056 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 13174)
+
+Caused by:
+    0: Looking up task storage for TaskId 13174 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 16763)
+
+Caused by:
+    0: Looking up task storage for TaskId 16763 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 15966)
+
+Caused by:
+    0: Looking up task storage for TaskId 15966 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 14168)
+
+Caused by:
+    0: Looking up task storage for TaskId 14168 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 10205)
+
+Caused by:
+    0: Looking up task storage for TaskId 10205 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001409.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001409.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 11 tasks
+
+Caused by:
+    0: Looking up typed data for 11 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001955.meta
+    2: Unable to open static sorted file 00001951.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001951.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:225:17:
+Failed to restore task data (corrupted database or bug): Data for batch of 3 tasks
+
+Caused by:
+    0: Looking up typed data for 3 tasks from database failed
+    1: Unable to open static sorted file referenced from 00001656.meta
+    2: Unable to open static sorted file 00001651.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001651.sst
+    4: The system cannot find the path specified. (os error 3)
+
+thread 'tokio-runtime-worker' (22816) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:197:17:
+Failed to restore task data (corrupted database or bug): Data for TaskId 11154)
+
+Caused by:
+    0: Looking up task storage for TaskId 11154 from database failed
+    1: Unable to open static sorted file referenced from 00001411.meta
+    2: Unable to open static sorted file 00001410.sst
+    3: Failed to open SST file C:\Users\Administrator\fintrack\.next\dev\cache/turbopack\f37fad94\00001410.sst
+    4: The system cannot find the path specified. (os error 3)
+Persisting failed: Unable to write SST file 00002303.sst
+
+Caused by:
+    The system cannot find the path specified. (os error 3)
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
