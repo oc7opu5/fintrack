@@ -293,9 +293,19 @@ export const aiRouter = router({
       // All providers failed
       if (preferences.disableLocalFallback) {
         const errorDetail = errors.join("\n");
+        const hasOpenCodeZen = errors.some((e) => e.includes("opencode-zen"));
+        const hasNoKeys = errors.filter((e) => e.includes("no API key")).length;
+
+        let suggestion = "";
+        if (hasOpenCodeZen && !errors.some((e) => e.includes("no API key") && !e.includes("opencode-zen"))) {
+          suggestion = "\n\nOpenCode Zen returned a server error. This is usually temporary. Try:\n1. Wait a few minutes and retry\n2. Add another provider (Groq is free and fast)\n3. Turn off AI Only mode to use local fallback";
+        } else if (hasNoKeys > 0) {
+          suggestion = "\n\nAdd an API key in AI Settings. Free options: Groq, OpenCode Zen free models.";
+        }
+
         return {
           success: false,
-          response: `No AI provider worked. Errors:\n${errorDetail}\n\nPlease check your API keys in AI Settings.`,
+          response: `No AI provider worked:${suggestion}\n\nErrors:\n${errorDetail}`,
           provider: "none",
           model: "none",
           latencyMs: Date.now() - startTime,
