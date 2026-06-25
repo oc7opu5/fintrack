@@ -358,7 +358,8 @@ model AISettings {
   activeModel     String   @default("")
   fallbackModel   String   @default("")
   apiKeys         Json     @default("{}")
-  preferences     Json     @default("{\"autoParse\":true,\"showConfidence\":true,\"enableChat\":true}")
+  fetchedModels   Json     @default("{}")
+  preferences     Json     @default("{\"autoParse\":true,\"showConfidence\":true,\"enableChat\":true,\"disableLocalFallback\":true}")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

@@ -7,6 +7,7 @@ const aiSettingsSchema = z.object({
   activeModel: z.string().optional(),
   fallbackModel: z.string().optional(),
   apiKeys: z.record(z.string(), z.string()).optional(),
+  fetchedModels: z.record(z.string(), z.array(z.string())).optional(),
   preferences: z.object({
     autoParse: z.boolean().optional(),
     showConfidence: z.boolean().optional(),
@@ -78,6 +79,7 @@ export const aiSettingsRouter = router({
             activeModel: input.activeModel ?? existing.activeModel,
             fallbackModel: input.fallbackModel ?? existing.fallbackModel,
             apiKeys: mergedKeys,
+            fetchedModels: (input.fetchedModels as any) ?? existing.fetchedModels,
             preferences: (input.preferences as any) ?? existing.preferences,
           },
         });

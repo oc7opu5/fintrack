@@ -43,7 +43,6 @@ export const aiRouter = router({
       return ctx.db.aIParseLog.update({ where: { id: input.logId }, data: { wasAccepted: true } });
     }),
 
-  // Get chat history
   getHistory: protectedProcedure
     .input(z.object({ limit: z.number().default(50) }))
     .query(async ({ ctx, input }) => {
@@ -55,10 +54,47 @@ export const aiRouter = router({
       return messages.reverse();
     }),
 
-  // Clear chat history
   clearHistory: protectedProcedure.mutation(async ({ ctx }) => {
     await ctx.db.chatMessage.deleteMany({ where: { userId: ctx.session.user.id } });
     return { success: true };
+  }),
+
+  // Get available models for chat dropdown
+  getModels: protectedProcedure.query(async ({ ctx }) => {
+    const settings = await ctx.db.aISettings.findUnique({
+      where: { userId: ctx.session.user.id },
+    });
+
+    const apiKeys = (settings?.apiKeys as Record<string, string>) || {};
+    const fetchedModels = (settings as any)?.fetchedModels || {};
+
+    const providers: Record<string, { name: string; models: string[] }> = {};
+
+    const providerDefaults: Record<string, { name: string; models: string[] }> = {
+      openai: { name: "OpenAI", models: ["gpt-4o-mini", "gpt-4o"] },
+      anthropic: { name: "Anthropic", models: ["claude-3-5-haiku-20241022", "claude-3-5-sonnet-20241022"] },
+      gemini: { name: "Gemini", models: ["gemini-1.5-flash", "gemini-1.5-pro"] },
+      groq: { name: "Groq", models: ["llama-3.1-8b-instant", "llama-3.1-70b-versatile"] },
+      deepseek: { name: "DeepSeek", models: ["deepseek-chat", "deepseek-reasoner"] },
+      mistral: { name: "Mistral", models: ["mistral-small-latest"] },
+      "opencode-zen": { name: "OpenCode Zen", models: ["deepseek-v4-flash-free", "deepseek-v4-flash", "gpt-5.4-mini", "claude-haiku-4-5"] },
+      openrouter: { name: "OpenRouter", models: ["meta-llama/llama-3.1-8b-instruct:free"] },
+    };
+
+    for (const [id, defaults] of Object.entries(providerDefaults)) {
+      if (apiKeys[id]) {
+        providers[id] = {
+          name: defaults.name,
+          models: fetchedModels[id]?.length ? fetchedModels[id] : defaults.models,
+        };
+      }
+    }
+
+    return {
+      providers,
+      activeProvider: settings?.activeProvider || "",
+      activeModel: settings?.activeModel || "",
+    };
   }),
 
   // Chat with AI
@@ -91,7 +127,7 @@ export const aiRouter = router({
       const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
 
-      const [accounts, transactions, subscriptions, thisMonth, lastMonth] = await Promise.all([
+      const [accounts, transactions, subscriptions, thisMonthIncome, thisMonthExpense, lastMonth] = await Promise.all([
         ctx.db.account.findMany({ where: { userId: ctx.session.user.id, isActive: true }, select: { name: true, type: true, balance: true } }),
         ctx.db.transaction.findMany({
           where: { userId: ctx.session.user.id },
@@ -101,24 +137,15 @@ export const aiRouter = router({
         }),
         ctx.db.subscription.findMany({ where: { userId: ctx.session.user.id, status: "ACTIVE" }, select: { name: true, amount: true, billingCycle: true } }),
         ctx.db.transaction.aggregate({
-          where: { userId: ctx.session.user.id, date: { gte: thisMonthStart, lte: thisMonthEnd } },
-          _sum: { amount: true },
-          _count: true,
-        }),
-        ctx.db.transaction.aggregate({
-          where: { userId: ctx.session.user.id, date: { gte: lastMonthStart, lte: lastMonthEnd } },
-          _sum: { amount: true },
-        }),
-      ]);
-
-      // Get income/expense breakdown
-      const [thisMonthIncome, thisMonthExpense] = await Promise.all([
-        ctx.db.transaction.aggregate({
           where: { userId: ctx.session.user.id, type: "INCOME", date: { gte: thisMonthStart, lte: thisMonthEnd } },
           _sum: { amount: true },
         }),
         ctx.db.transaction.aggregate({
           where: { userId: ctx.session.user.id, type: "EXPENSE", date: { gte: thisMonthStart, lte: thisMonthEnd } },
+          _sum: { amount: true },
+        }),
+        ctx.db.transaction.aggregate({
+          where: { userId: ctx.session.user.id, date: { gte: lastMonthStart, lte: lastMonthEnd } },
           _sum: { amount: true },
         }),
       ]);
@@ -146,6 +173,7 @@ export const aiRouter = router({
       const storedKeys = (aiSettings?.apiKeys as Record<string, string>) || {};
       const preferredProvider = aiSettings?.activeProvider || "";
       const preferredModel = aiSettings?.activeModel || "";
+      const preferences = (aiSettings?.preferences as any) || {};
 
       // Provider configs
       const providers = [
@@ -164,17 +192,23 @@ export const aiRouter = router({
         providers.sort((a, b) => (a.id === preferredProvider ? -1 : b.id === preferredProvider ? 1 : 0));
       }
 
+      const errors: string[] = [];
+
       for (const provider of providers) {
         const apiKey = storedKeys[provider.id] || process.env[provider.envKey];
-        if (!apiKey) continue;
+        if (!apiKey) {
+          errors.push(`${provider.id}: no API key`);
+          continue;
+        }
 
         const model = preferredModel && provider.id === preferredProvider ? preferredModel : provider.defaultModel;
 
         try {
           let content = "";
+          let res: Response;
 
           if (provider.id === "anthropic") {
-            const res = await fetch(`${provider.baseUrl}/messages`, {
+            res = await fetch(`${provider.baseUrl}/messages`, {
               method: "POST",
               headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
               body: JSON.stringify({
@@ -184,13 +218,18 @@ export const aiRouter = router({
                 messages: messages.filter((m) => m.role !== "system").map((m) => ({ role: m.role, content: m.content })),
               }),
             });
+            if (!res.ok) {
+              const errBody = await res.text();
+              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 100)}`);
+              continue;
+            }
             const data = await res.json();
             content = data.content?.[0]?.text || "";
           } else if (provider.id === "gemini") {
             const systemMsg = messages.find((m) => m.role === "system")?.content || "";
             const userMsgs = messages.filter((m) => m.role !== "system").map((m) => `${m.role === "assistant" ? "Assistant" : "User"}: ${m.content}`).join("\n\n");
 
-            const res = await fetch(`${provider.baseUrl}/models/${model}:generateContent?key=${apiKey}`, {
+            res = await fetch(`${provider.baseUrl}/models/${model}:generateContent?key=${apiKey}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -198,34 +237,31 @@ export const aiRouter = router({
                 generationConfig: { maxOutputTokens: 1024 },
               }),
             });
+            if (!res.ok) {
+              const errBody = await res.text();
+              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 100)}`);
+              continue;
+            }
             const data = await res.json();
             content = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
           } else {
-            // OpenAI-compatible
-            const res = await fetch(`${provider.baseUrl}/chat/completions`, {
+            res = await fetch(`${provider.baseUrl}/chat/completions`, {
               method: "POST",
               headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-              body: JSON.stringify({
-                model,
-                messages,
-                max_tokens: 1024,
-                temperature: 0.7,
-              }),
+              body: JSON.stringify({ model, messages, max_tokens: 1024, temperature: 0.7 }),
             });
+            if (!res.ok) {
+              const errBody = await res.text();
+              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 100)}`);
+              continue;
+            }
             const data = await res.json();
             content = data.choices?.[0]?.message?.content || "";
           }
 
           if (content) {
-            // Save assistant response
             await ctx.db.chatMessage.create({
-              data: {
-                userId: ctx.session.user.id,
-                role: "assistant",
-                content,
-                provider: provider.id,
-                model,
-              },
+              data: { userId: ctx.session.user.id, role: "assistant", content, provider: provider.id, model },
             });
 
             return {
@@ -235,19 +271,21 @@ export const aiRouter = router({
               model,
               latencyMs: Date.now() - startTime,
             };
+          } else {
+            errors.push(`${provider.id}: empty response`);
           }
         } catch (error) {
-          console.warn(`Chat provider ${provider.id} failed:`, error);
+          errors.push(`${provider.id}: ${error instanceof Error ? error.message : "unknown error"}`);
           continue;
         }
       }
 
-      // Check if local fallback is disabled
-      const preferences = (aiSettings?.preferences as any) || {};
+      // All providers failed
       if (preferences.disableLocalFallback) {
+        const errorDetail = errors.join("\n");
         return {
           success: false,
-          response: "No AI provider configured. Please add an API key in AI Settings.",
+          response: `No AI provider worked. Errors:\n${errorDetail}\n\nPlease check your API keys in AI Settings.`,
           provider: "none",
           model: "none",
           latencyMs: Date.now() - startTime,

@@ -29,7 +29,6 @@ import {
   TrendingDown,
   CreditCard,
   BarChart3,
-  Settings,
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
@@ -54,40 +53,15 @@ const SUGGESTIONS = [
   { text: "Give me financial advice", icon: Sparkles },
 ];
 
-const PROVIDER_MODELS: Record<string, string[]> = {
-  openai: ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
-  anthropic: ["claude-3-5-haiku-20241022", "claude-3-5-sonnet-20241022", "claude-3-haiku-20240307"],
-  gemini: ["gemini-1.5-flash", "gemini-1.5-pro"],
-  groq: ["llama-3.1-8b-instant", "llama-3.1-70b-versatile"],
-  deepseek: ["deepseek-chat", "deepseek-reasoner"],
-  mistral: ["mistral-small-latest", "mistral-medium-latest"],
-  "opencode-zen": ["deepseek-v4-flash-free", "deepseek-v4-flash", "gpt-5.4-mini", "claude-haiku-4-5"],
-  openrouter: ["meta-llama/llama-3.1-8b-instruct:free"],
-};
-
-const PROVIDER_NAMES: Record<string, string> = {
-  openai: "OpenAI",
-  anthropic: "Anthropic",
-  gemini: "Gemini",
-  groq: "Groq",
-  deepseek: "DeepSeek",
-  mistral: "Mistral",
-  "opencode-zen": "OpenCode Zen",
-  openrouter: "OpenRouter",
-};
-
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [selectedProvider, setSelectedProvider] = useState<string>("");
-  const [selectedModel, setSelectedModel] = useState<string>("");
-  const [aiOnlyMode, setAiOnlyMode] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
   const { data: history } = trpc.ai.getHistory.useQuery({ limit: 50 });
-  const { data: aiSettings } = trpc.aiSettings.get.useQuery();
+  const { data: modelsData } = trpc.ai.getModels.useQuery();
   const chatMutation = trpc.ai.chat.useMutation();
   const clearMutation = trpc.ai.clearHistory.useMutation({
     onSuccess: () => {
@@ -98,30 +72,39 @@ export default function ChatPage() {
   const updateSettingsMutation = trpc.aiSettings.save.useMutation({
     onSuccess: () => utils.aiSettings.get.invalidate(),
   });
+  const { data: aiSettings } = trpc.aiSettings.get.useQuery();
 
-  // Load settings
-  useEffect(() => {
-    if (aiSettings) {
-      const s = aiSettings as any;
-      setSelectedProvider(s.activeProvider || "");
-      setSelectedModel(s.activeModel || "");
-    }
-  }, [aiSettings]);
+  const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [aiOnlyMode, setAiOnlyMode] = useState<boolean>(true);
 
-  // Load history on mount
+  // Load history
   useEffect(() => {
     if (history && messages.length === 0) {
-      const loaded = history.map((m) => ({
+      setMessages(history.map((m) => ({
         id: m.id,
         role: m.role as "user" | "assistant",
         content: m.content,
         provider: m.provider || undefined,
         model: m.model || undefined,
         timestamp: new Date(m.createdAt),
-      }));
-      setMessages(loaded);
+      })));
     }
   }, [history]);
+
+  // Load settings
+  useEffect(() => {
+    const md = modelsData as any;
+    if (md) {
+      setSelectedProvider(md.activeProvider || "");
+      setSelectedModel(md.activeModel || "");
+    }
+    const s = aiSettings as any;
+    if (s) {
+      setAiOnlyMode(s.preferences?.disableLocalFallback ?? true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(modelsData), JSON.stringify(aiSettings)]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -152,7 +135,7 @@ export default function ChatPage() {
           const assistantMessage: Message = {
             id: `assistant-${Date.now()}`,
             role: "assistant",
-            content: result.success ? result.response : "Sorry, I couldn't process that.",
+            content: result.success ? result.response : result.response || "Sorry, I couldn't process that.",
             provider: result.provider,
             model: result.model,
             latencyMs: result.latencyMs,
@@ -162,26 +145,23 @@ export default function ChatPage() {
           setMessages((prev) => [...prev, assistantMessage]);
         },
         onError: (error) => {
-          const errorMessage: Message = {
+          setMessages((prev) => [...prev, {
             id: `error-${Date.now()}`,
             role: "assistant",
-            content: `Error: ${error.message}. Please try again.`,
+            content: `Error: ${error.message}`,
             timestamp: new Date(),
             isError: true,
-          };
-          setMessages((prev) => [...prev, errorMessage]);
+          }]);
         },
       }
     );
   };
 
   const handleRetry = (failedMessage: Message) => {
-    // Find the user message before the failed one
     const idx = messages.findIndex((m) => m.id === failedMessage.id);
     if (idx > 0) {
       const prevUserMsg = messages[idx - 1];
       if (prevUserMsg.role === "user") {
-        // Remove failed message and retry
         setMessages((prev) => prev.filter((m) => m.id !== failedMessage.id));
         handleSend(prevUserMsg.content);
       }
@@ -192,23 +172,6 @@ export default function ChatPage() {
     navigator.clipboard.writeText(content);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const formatMessage = (content: string) => {
-    // Simple markdown-like formatting
-    return content
-      .replace(/\*\*(.*?)\*\*/g, "$1")
-      .replace(/\n\n/g, "\n")
-      .split("\n")
-      .map((line, i) => {
-        if (line.startsWith("- ")) {
-          return <li key={i} className="ml-4">{line.slice(2)}</li>;
-        }
-        if (line.includes(":") && line.startsWith("═")) {
-          return <div key={i} className="font-bold mt-2">{line}</div>;
-        }
-        return <span key={i}>{line}<br /></span>;
-      });
   };
 
   const handleModelChange = (provider: string, model: string) => {
@@ -225,95 +188,70 @@ export default function ChatPage() {
     });
   };
 
-  // Load AI-only preference
-  useEffect(() => {
-    if (aiSettings) {
-      const s = aiSettings as any;
-      setAiOnlyMode(s.preferences?.disableLocalFallback ?? true);
-    }
-  }, [aiSettings]);
+  const availableProviders: Record<string, { name: string; models: string[] }> = (modelsData as any)?.providers || {};
 
-  const availableProviders = Object.keys(PROVIDER_MODELS).filter((p) => {
-    const s = aiSettings as any;
-    return s?.apiKeys?.[p]; // Only show providers with saved keys
-  });
+  const formatMessage = (content: string) => {
+    return content.split("\n").map((line, i) => {
+      if (line.startsWith("- ")) {
+        return <li key={i} className="ml-4 list-disc">{line.slice(2)}</li>;
+      }
+      if (line.startsWith("═")) {
+        return <div key={i} className="font-bold mt-2">{line}</div>;
+      }
+      return <span key={i}>{line}<br /></span>;
+    });
+  };
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Bot className="w-6 h-6" />
-            AI Financial Assistant
+            AI Assistant
           </h1>
-          <p className="text-muted-foreground">
-            Analyzes your real financial data • Powered by AI
-          </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Model Selector */}
-          {availableProviders.length > 0 && (
-            <div className="flex items-center gap-2">
-              <Select
-                value={selectedProvider}
-                onValueChange={(v) => {
-                  const models = PROVIDER_MODELS[v] || [];
-                  handleModelChange(v, models[0] || "");
-                }}
-              >
-                <SelectTrigger className="w-[140px]">
+          {Object.keys(availableProviders).length > 0 && (
+            <>
+              <Select value={selectedProvider} onValueChange={(v) => {
+                const models = availableProviders[v]?.models || [];
+                handleModelChange(v, models[0] || "");
+              }}>
+                <SelectTrigger className="w-[130px]">
                   <SelectValue placeholder="Provider" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableProviders.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {PROVIDER_NAMES[p] || p}
-                    </SelectItem>
+                  {Object.entries(availableProviders).map(([id, p]) => (
+                    <SelectItem key={id} value={id}>{p.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              {selectedProvider && PROVIDER_MODELS[selectedProvider] && (
-                <Select
-                  value={selectedModel}
-                  onValueChange={(v) => handleModelChange(selectedProvider, v)}
-                >
-                  <SelectTrigger className="w-[180px]">
+              {selectedProvider && availableProviders[selectedProvider] && (
+                <Select value={selectedModel} onValueChange={(v) => handleModelChange(selectedProvider, v)}>
+                  <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="Model" />
                   </SelectTrigger>
                   <SelectContent>
-                    {PROVIDER_MODELS[selectedProvider].map((m) => (
+                    {availableProviders[selectedProvider].models.map((m) => (
                       <SelectItem key={m} value={m}>{m}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               )}
-            </div>
+            </>
           )}
 
-          {/* AI Only Toggle */}
-          <Button
-            variant={aiOnlyMode ? "default" : "outline"}
-            size="sm"
-            onClick={toggleAiOnly}
-            className="gap-1"
-          >
+          <Button variant={aiOnlyMode ? "default" : "outline"} size="sm" onClick={toggleAiOnly} className="gap-1">
             {aiOnlyMode ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
             {aiOnlyMode ? "AI Only" : "AI + Local"}
           </Button>
 
-          <Badge variant="secondary">
-            <Sparkles className="w-3 h-3 mr-1" />
-            {messages.length} messages
-          </Badge>
           {messages.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => clearMutation.mutate()}
-              disabled={clearMutation.isPending}
-            >
+            <Button variant="ghost" size="sm" onClick={() => clearMutation.mutate()} disabled={clearMutation.isPending}>
               <Trash2 className="w-4 h-4" />
             </Button>
           )}
@@ -331,17 +269,12 @@ export default function ChatPage() {
               <div>
                 <h2 className="text-xl font-semibold">Hi! I'm your AI financial assistant</h2>
                 <p className="text-muted-foreground mt-1">
-                  I can analyze your spending, track subscriptions, and give personalized advice.
+                  Ask me anything about your finances.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2 max-w-md">
                 {SUGGESTIONS.map((s) => (
-                  <Button
-                    key={s.text}
-                    variant="outline"
-                    className="justify-start h-auto py-3 text-left"
-                    onClick={() => handleSend(s.text)}
-                  >
+                  <Button key={s.text} variant="outline" className="justify-start h-auto py-3 text-left" onClick={() => handleSend(s.text)}>
                     <s.icon className="w-4 h-4 mr-2 flex-shrink-0" />
                     <span className="text-xs">{s.text}</span>
                   </Button>
@@ -351,24 +284,19 @@ export default function ChatPage() {
           )}
 
           {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
+            <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
               {message.role === "assistant" && (
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Bot className="w-4 h-4 text-primary" />
                 </div>
               )}
-              <div
-                className={`max-w-[85%] rounded-lg p-3 ${
-                  message.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : message.isError
-                    ? "bg-destructive/10 border border-destructive/20"
-                    : "bg-muted"
-                }`}
-              >
+              <div className={`max-w-[85%] rounded-lg p-3 ${
+                message.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : message.isError
+                  ? "bg-destructive/10 border border-destructive/20"
+                  : "bg-muted"
+              }`}>
                 {message.isError && <AlertCircle className="w-4 h-4 text-destructive mb-1" />}
                 <div className="text-sm whitespace-pre-wrap">{formatMessage(message.content)}</div>
                 <div className="flex items-center justify-between mt-2 gap-2">
@@ -376,30 +304,21 @@ export default function ChatPage() {
                     <p className={`text-xs ${message.role === "user" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                       {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </p>
-                    {message.provider && message.provider !== "local" && (
+                    {message.provider && message.provider !== "local" && message.provider !== "none" && (
                       <Badge variant="outline" className="text-xs py-0">
                         {message.provider}/{message.model}
+                        {message.latencyMs ? ` (${message.latencyMs}ms)` : ""}
                       </Badge>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
                     {message.role === "assistant" && !message.isError && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0"
-                        onClick={() => handleCopy(message.content, message.id)}
-                      >
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => handleCopy(message.content, message.id)}>
                         {copiedId === message.id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                       </Button>
                     )}
                     {message.isError && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 px-2 text-xs"
-                        onClick={() => handleRetry(message)}
-                      >
+                      <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => handleRetry(message)}>
                         <RefreshCw className="w-3 h-3 mr-1" /> Retry
                       </Button>
                     )}
@@ -429,19 +348,13 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </CardContent>
 
-        {/* Input */}
         <div className="p-4 border-t">
           <div className="flex gap-2">
             <Input
               placeholder="Ask about your finances..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey && !chatMutation.isPending) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !chatMutation.isPending) { e.preventDefault(); handleSend(); } }}
               disabled={chatMutation.isPending}
             />
             <Button onClick={() => handleSend()} disabled={!input.trim() || chatMutation.isPending}>

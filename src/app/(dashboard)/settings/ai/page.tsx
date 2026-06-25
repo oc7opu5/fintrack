@@ -90,6 +90,12 @@ export default function AISettingsPage() {
 
     if (result.success && result.models.length > 0) {
       setFetchedModels((prev) => ({ ...prev, [providerId]: result.models }));
+
+      // Save fetched models to database
+      const currentFetched = (settings as any)?.fetchedModels || {};
+      saveMutation.mutate({
+        fetchedModels: { ...currentFetched, [providerId]: result.models },
+      });
     }
 
     setTesting(null);
