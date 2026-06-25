@@ -5,6 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { trpc } from "@/lib/trpc/client";
 import {
   Bot,
@@ -22,6 +29,7 @@ import {
   TrendingDown,
   CreditCard,
   BarChart3,
+  Settings,
 } from "lucide-react";
 
 interface Message {
@@ -44,14 +52,39 @@ const SUGGESTIONS = [
   { text: "Give me financial advice", icon: Sparkles },
 ];
 
+const PROVIDER_MODELS: Record<string, string[]> = {
+  openai: ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
+  anthropic: ["claude-3-5-haiku-20241022", "claude-3-5-sonnet-20241022", "claude-3-haiku-20240307"],
+  gemini: ["gemini-1.5-flash", "gemini-1.5-pro"],
+  groq: ["llama-3.1-8b-instant", "llama-3.1-70b-versatile"],
+  deepseek: ["deepseek-chat", "deepseek-reasoner"],
+  mistral: ["mistral-small-latest", "mistral-medium-latest"],
+  "opencode-zen": ["deepseek-v4-flash-free", "deepseek-v4-flash", "gpt-5.4-mini", "claude-haiku-4-5"],
+  openrouter: ["meta-llama/llama-3.1-8b-instruct:free"],
+};
+
+const PROVIDER_NAMES: Record<string, string> = {
+  openai: "OpenAI",
+  anthropic: "Anthropic",
+  gemini: "Gemini",
+  groq: "Groq",
+  deepseek: "DeepSeek",
+  mistral: "Mistral",
+  "opencode-zen": "OpenCode Zen",
+  openrouter: "OpenRouter",
+};
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
   const { data: history } = trpc.ai.getHistory.useQuery({ limit: 50 });
+  const { data: aiSettings } = trpc.aiSettings.get.useQuery();
   const chatMutation = trpc.ai.chat.useMutation();
   const clearMutation = trpc.ai.clearHistory.useMutation({
     onSuccess: () => {
@@ -59,6 +92,18 @@ export default function ChatPage() {
       utils.ai.getHistory.invalidate();
     },
   });
+  const updateSettingsMutation = trpc.aiSettings.save.useMutation({
+    onSuccess: () => utils.aiSettings.get.invalidate(),
+  });
+
+  // Load settings
+  useEffect(() => {
+    if (aiSettings) {
+      const s = aiSettings as any;
+      setSelectedProvider(s.activeProvider || "");
+      setSelectedModel(s.activeModel || "");
+    }
+  }, [aiSettings]);
 
   // Load history on mount
   useEffect(() => {
@@ -163,6 +208,17 @@ export default function ChatPage() {
       });
   };
 
+  const handleModelChange = (provider: string, model: string) => {
+    setSelectedProvider(provider);
+    setSelectedModel(model);
+    updateSettingsMutation.mutate({ activeProvider: provider, activeModel: model });
+  };
+
+  const availableProviders = Object.keys(PROVIDER_MODELS).filter((p) => {
+    const s = aiSettings as any;
+    return s?.apiKeys?.[p]; // Only show providers with saved keys
+  });
+
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       {/* Header */}
@@ -177,6 +233,46 @@ export default function ChatPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Model Selector */}
+          {availableProviders.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Select
+                value={selectedProvider}
+                onValueChange={(v) => {
+                  const models = PROVIDER_MODELS[v] || [];
+                  handleModelChange(v, models[0] || "");
+                }}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableProviders.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {PROVIDER_NAMES[p] || p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {selectedProvider && PROVIDER_MODELS[selectedProvider] && (
+                <Select
+                  value={selectedModel}
+                  onValueChange={(v) => handleModelChange(selectedProvider, v)}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROVIDER_MODELS[selectedProvider].map((m) => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          )}
+
           <Badge variant="secondary">
             <Sparkles className="w-3 h-3 mr-1" />
             {messages.length} messages
