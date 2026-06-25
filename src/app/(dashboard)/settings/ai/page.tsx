@@ -110,14 +110,23 @@ async function fetchOpenRouterModels(apiKey: string): Promise<string[]> {
 
 async function fetchOpenCodeZenModels(apiKey: string): Promise<string[]> {
   try {
-    const baseUrl = "https://api.opencodezen.com/v1";
-    const res = await fetch(`${baseUrl}/models`, {
+    const res = await fetch("https://opencode.ai/zen/v1/models", {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
     const data = await res.json();
     return data.data?.map((m: any) => m.id).sort() || [];
   } catch {
-    return ["zen-flash", "zen-pro", "zen-lite", "claude-3-haiku", "gpt-4o-mini", "llama-3.1-8b"];
+    return [
+      "deepseek-v4-flash-free",
+      "deepseek-v4-flash",
+      "deepseek-v4-pro",
+      "gpt-5.4-mini",
+      "gpt-5.4-nano",
+      "claude-haiku-4-5",
+      "gemini-3-flash",
+      "qwen3.5-plus",
+      "mimo-v2.5-free",
+    ];
   }
 }
 
@@ -194,9 +203,9 @@ const providers: ProviderConfig[] = [
     name: "OpenCode Zen",
     description: "Curated models, tested by OpenCode team",
     envKey: "OPENCODE_ZEN_API_KEY",
-    models: ["zen-flash", "zen-pro", "zen-lite"],
-    docsUrl: "https://opencode.ai",
-    freeTier: "Free tier available",
+    models: ["deepseek-v4-flash-free", "deepseek-v4-flash", "gpt-5.4-mini", "claude-haiku-4-5"],
+    docsUrl: "https://opencode.ai/auth",
+    freeTier: "Free models available",
     fetchModels: fetchOpenCodeZenModels,
   },
   {

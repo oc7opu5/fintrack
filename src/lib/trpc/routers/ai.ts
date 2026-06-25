@@ -213,7 +213,7 @@ export const aiRouter = router({
                 : provider.name === "mistral"
                 ? "https://api.mistral.ai/v1"
                 : provider.name === "opencode-zen"
-                ? process.env.OPENCODE_ZEN_BASE_URL || "https://api.opencodezen.com/v1"
+                ? "https://opencode.ai/zen/v1"
                 : "https://openrouter.ai/api/v1";
 
             response = await fetch(`${baseUrl}/chat/completions`, {
