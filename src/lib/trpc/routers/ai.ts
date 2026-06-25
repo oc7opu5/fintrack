@@ -139,26 +139,42 @@ export const aiRouter = router({
 - Top Categories: ${Object.entries(categoryTotals).sort(([, a], [, b]) => b - a).slice(0, 5).map(([cat, amt]) => `${cat}: ৳${amt.toLocaleString()}`).join(", ")}
 - Recent Transactions: ${transactions.slice(0, 10).map((t) => `${t.description} (${t.type === "INCOME" ? "+" : "-"}৳${Number(t.amount).toLocaleString()})`).join(", ")}`;
 
-      // Try AI providers
+      // Try AI providers - get settings from database
+      const aiSettings = await ctx.db.aISettings.findUnique({
+        where: { userId: ctx.session.user.id },
+      });
+
+      const storedKeys = (aiSettings?.apiKeys as Record<string, string>) || {};
+      const preferredProvider = aiSettings?.activeProvider || "";
+      const preferredModel = aiSettings?.activeModel || "";
+
       const providers = [
-        { envKey: "OPENAI_API_KEY", model: "gpt-4o-mini", name: "openai" },
-        { envKey: "GROQ_API_KEY", model: "llama-3.1-8b-instant", name: "groq" },
-        { envKey: "ANTHROPIC_API_KEY", model: "claude-3-haiku-20240307", name: "anthropic" },
-        { envKey: "GOOGLE_AI_API_KEY", model: "gemini-1.5-flash", name: "gemini" },
-        { envKey: "DEEPSEEK_API_KEY", model: "deepseek-chat", name: "deepseek" },
-        { envKey: "MISTRAL_API_KEY", model: "mistral-small-latest", name: "mistral" },
-        { envKey: "OPENCODE_ZEN_API_KEY", model: process.env.OPENCODE_ZEN_MODEL || "zen-flash", name: "opencode-zen" },
+        { id: "openai", envKey: "OPENAI_API_KEY", defaultModel: "gpt-4o-mini" },
+        { id: "groq", envKey: "GROQ_API_KEY", defaultModel: "llama-3.1-8b-instant" },
+        { id: "anthropic", envKey: "ANTHROPIC_API_KEY", defaultModel: "claude-3-haiku-20240307" },
+        { id: "gemini", envKey: "GOOGLE_AI_API_KEY", defaultModel: "gemini-1.5-flash" },
+        { id: "deepseek", envKey: "DEEPSEEK_API_KEY", defaultModel: "deepseek-chat" },
+        { id: "mistral", envKey: "MISTRAL_API_KEY", defaultModel: "mistral-small-latest" },
+        { id: "opencode-zen", envKey: "OPENCODE_ZEN_API_KEY", defaultModel: "deepseek-v4-flash-free" },
       ];
 
+      // Sort providers - preferred first
+      if (preferredProvider) {
+        providers.sort((a, b) => (a.id === preferredProvider ? -1 : b.id === preferredProvider ? 1 : 0));
+      }
+
       for (const provider of providers) {
-        const apiKey = process.env[provider.envKey];
+        // Use stored key from database, fall back to env var
+        const apiKey = storedKeys[provider.id] || process.env[provider.envKey];
         if (!apiKey) continue;
+
+        const model = preferredModel && provider.id === preferredProvider ? preferredModel : provider.defaultModel;
 
         try {
           let response;
           let content;
 
-          if (provider.name === "anthropic") {
+          if (provider.id === "anthropic") {
             response = await fetch("https://api.anthropic.com/v1/messages", {
               method: "POST",
               headers: {
@@ -167,7 +183,7 @@ export const aiRouter = router({
                 "anthropic-version": "2023-06-01",
               },
               body: JSON.stringify({
-                model: provider.model,
+                model,
                 max_tokens: 1024,
                 messages: [
                   {
@@ -179,9 +195,9 @@ export const aiRouter = router({
             });
             const data = await response.json();
             content = data.content?.[0]?.text;
-          } else if (provider.name === "gemini") {
+          } else if (provider.id === "gemini") {
             response = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${provider.model}:generateContent?key=${apiKey}`,
+              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -204,15 +220,15 @@ export const aiRouter = router({
           } else {
             // OpenAI-compatible (OpenAI, Groq, DeepSeek, Mistral, OpenRouter, OpenCode Zen)
             const baseUrl =
-              provider.name === "openai"
+              provider.id === "openai"
                 ? "https://api.openai.com/v1"
-                : provider.name === "groq"
+                : provider.id === "groq"
                 ? "https://api.groq.com/openai/v1"
-                : provider.name === "deepseek"
+                : provider.id === "deepseek"
                 ? "https://api.deepseek.com/v1"
-                : provider.name === "mistral"
+                : provider.id === "mistral"
                 ? "https://api.mistral.ai/v1"
-                : provider.name === "opencode-zen"
+                : provider.id === "opencode-zen"
                 ? "https://opencode.ai/zen/v1"
                 : "https://openrouter.ai/api/v1";
 
@@ -223,7 +239,7 @@ export const aiRouter = router({
                 Authorization: `Bearer ${apiKey}`,
               },
               body: JSON.stringify({
-                model: provider.model,
+                model,
                 messages: [
                   {
                     role: "system",
@@ -246,13 +262,13 @@ export const aiRouter = router({
             return {
               success: true,
               response: content,
-              provider: provider.name,
-              model: provider.model,
+              provider: provider.id,
+              model,
               latencyMs: Date.now() - startTime,
             };
           }
         } catch (error) {
-          console.warn(`Chat provider ${provider.name} failed:`, error);
+          console.warn(`Chat provider ${provider.id} failed:`, error);
           continue;
         }
       }
