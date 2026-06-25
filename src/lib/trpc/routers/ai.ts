@@ -30,7 +30,19 @@ function parseActions(response: string): { cleanResponse: string; actions: Array
   return { cleanResponse, actions };
 }
 
-// Execute transaction actions
+// Calculate next billing date
+function getNextBillingDate(startDate: Date, billingCycle: string): Date {
+  const next = new Date(startDate);
+  switch (billingCycle) {
+    case "WEEKLY": next.setDate(next.getDate() + 7); break;
+    case "MONTHLY": next.setMonth(next.getMonth() + 1); break;
+    case "QUARTERLY": next.setMonth(next.getMonth() + 3); break;
+    case "YEARLY": next.setFullYear(next.getFullYear() + 1); break;
+  }
+  return next;
+}
+
+// Execute transaction/subscription actions
 async function executeActions(
   actions: Array<{ type: string; data: any }>,
   userId: string,
@@ -41,29 +53,24 @@ async function executeActions(
   for (const action of actions) {
     try {
       if (action.type === "ADD") {
-        const { type, amount, description, category, account, date } = action.data;
+        const { type, amount, description, category, account } = action.data;
 
-        // Find account
-        const accounts = await db.account.findMany({
-          where: { userId, isActive: true },
-        });
+        const accounts = await db.account.findMany({ where: { userId, isActive: true } });
         const matchedAccount = accounts.find((a: any) =>
           a.name.toLowerCase().includes((account || "").toLowerCase())
         ) || accounts.find((a: any) => a.isDefault) || accounts[0];
 
         if (!matchedAccount) {
-          results.push("Could not find matching account");
+          results.push("❌ Could not find matching account");
           continue;
         }
 
-        // Find category
         const categories = await db.category.findMany({ where: { userId } });
         const matchedCategory = categories.find((c: any) =>
           c.name.toLowerCase().includes((category || "").toLowerCase())
         );
 
-        // Create transaction
-        const tx = await db.transaction.create({
+        await db.transaction.create({
           data: {
             userId,
             accountId: matchedAccount.id,
@@ -71,47 +78,78 @@ async function executeActions(
             type: type || "EXPENSE",
             amount: amount || 0,
             description: description || "Transaction from chat",
-            date: date ? new Date(date) : new Date(),
+            date: new Date(),
           },
         });
 
-        // Update account balance
         const balanceChange = type === "INCOME" ? amount : -amount;
         await db.account.update({
           where: { id: matchedAccount.id },
           data: { balance: { increment: balanceChange } },
         });
 
-        results.push(`Added ${type || "EXPENSE"}: ${description} ৳${amount} (${matchedAccount.name})`);
+        results.push(`✅ Added ${type || "EXPENSE"}: ${description} ৳${amount} → ${matchedAccount.name}`);
       } else if (action.type === "DELETE") {
         const { description } = action.data;
 
-        // Find matching transaction
         const tx = await db.transaction.findFirst({
-          where: {
-            userId,
-            description: { contains: description, mode: "insensitive" },
-          },
+          where: { userId, description: { contains: description, mode: "insensitive" } },
           orderBy: { date: "desc" },
         });
 
         if (!tx) {
-          results.push(`Could not find transaction matching "${description}"`);
+          results.push(`❌ Could not find transaction matching "${description}"`);
           continue;
         }
 
-        // Reverse balance
         const balanceEffect = tx.type === "INCOME" ? -Number(tx.amount) : Number(tx.amount);
-        await db.account.update({
-          where: { id: tx.accountId },
-          data: { balance: { increment: balanceEffect } },
+        await db.account.update({ where: { id: tx.accountId }, data: { balance: { increment: balanceEffect } } });
+        await db.transaction.delete({ where: { id: tx.id } });
+        results.push(`✅ Deleted: ${tx.description} ৳${Number(tx.amount)}`);
+      } else if (action.type === "ADD_SUB") {
+        const { name, amount, billingCycle, startDate, category, website } = action.data;
+
+        const start = startDate ? new Date(startDate) : new Date();
+        const cycle = billingCycle || "MONTHLY";
+        const nextBilling = getNextBillingDate(start, cycle);
+        const monthlyCost = cycle === "YEARLY" ? amount / 12 : cycle === "QUARTERLY" ? amount / 3 : amount;
+        const annualCost = monthlyCost * 12;
+        const daysUntilRenewal = Math.ceil((nextBilling.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
+        const sub = await db.subscription.create({
+          data: {
+            userId,
+            name: name || "Subscription",
+            amount: amount || 0,
+            billingCycle: cycle,
+            startDate: start,
+            nextBillingDate: nextBilling,
+            status: "ACTIVE",
+            category: category || "Subscriptions",
+            website: website || null,
+          },
         });
 
-        await db.transaction.delete({ where: { id: tx.id } });
-        results.push(`Deleted: ${tx.description} ৳${Number(tx.amount)}`);
+        results.push(`✅ Added subscription: ${name}`);
+        results.push(`📅 Next billing: ${nextBilling.toLocaleDateString("en-BD")} (${daysUntilRenewal} days)`);
+        results.push(`💰 Monthly cost: ৳${Math.round(monthlyCost).toLocaleString()} | Annual: ৳${Math.round(annualCost).toLocaleString()}`);
+      } else if (action.type === "DELETE_SUB") {
+        const { name } = action.data;
+
+        const sub = await db.subscription.findFirst({
+          where: { userId, name: { contains: name, mode: "insensitive" }, status: "ACTIVE" },
+        });
+
+        if (!sub) {
+          results.push(`❌ Could not find active subscription matching "${name}"`);
+          continue;
+        }
+
+        await db.subscription.update({ where: { id: sub.id }, data: { status: "CANCELLED", autoRenew: false } });
+        results.push(`✅ Cancelled subscription: ${sub.name}`);
       }
     } catch (error) {
-      results.push(`Failed: ${error instanceof Error ? error.message : "unknown error"}`);
+      results.push(`❌ Failed: ${error instanceof Error ? error.message : "unknown error"}`);
     }
   }
 
@@ -479,7 +517,51 @@ function generateLocalResponse(message: string, data: {
     ? Math.round(((data.monthlyIncome - data.monthlyExpense) / data.monthlyIncome) * 100)
     : 0;
 
-  // Handle transaction add requests
+  // Handle subscription add
+  if (lower.includes("add") && lower.includes("subscription")) {
+    const amountMatch = message.match(/(\d+(?:,\d{3})*(?:\.\d{2})?)/);
+    const amount = amountMatch ? parseFloat(amountMatch[1].replace(/,/g, "")) : 0;
+    const nameMatch = message.match(/(?:called?|named?|for)\s+(.+?)(?:\s+(?:costing|price|amount|at| billed)|$)/i);
+    const name = nameMatch?.[1]?.trim() || "Subscription";
+    const isYearly = /yearly|annual|per year/i.test(lower);
+    const isQuarterly = /quarterly|per quarter/i.test(lower);
+    const cycle = isYearly ? "YEARLY" : isQuarterly ? "QUARTERLY" : "MONTHLY";
+
+    if (amount > 0) {
+      const monthlyCost = cycle === "YEARLY" ? amount / 12 : cycle === "QUARTERLY" ? amount / 3 : amount;
+      const nextDate = new Date();
+      if (cycle === "MONTHLY") nextDate.setMonth(nextDate.getMonth() + 1);
+      else if (cycle === "YEARLY") nextDate.setFullYear(nextDate.getFullYear() + 1);
+      else nextDate.setMonth(nextDate.getMonth() + 3);
+      const daysLeft = Math.ceil((nextDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
+      return `[ACTION:ADD_SUB]
+{"name":"${name}","amount":${amount},"billingCycle":"${cycle}"}
+[/ACTION]
+
+I'll add that subscription for you:
+
+- **Name:** ${name}
+- **Cost:** ৳${amount.toLocaleString()}/${cycle.toLowerCase()}
+- **Monthly equivalent:** ৳${Math.round(monthlyCost).toLocaleString()}
+- **Annual cost:** ৳${Math.round(monthlyCost * 12).toLocaleString()}
+- **Next billing:** ${nextDate.toLocaleDateString("en-BD")} (${daysLeft} days)`;
+    }
+  }
+
+  // Handle subscription delete
+  if ((lower.includes("delete") || lower.includes("remove") || lower.includes("cancel")) && lower.includes("subscription")) {
+    const nameMatch = message.match(/(?:delete|remove|cancel)\s+(?:the\s+)?(.+?)(?:\s+subscription|$)/i);
+    if (nameMatch) {
+      return `[ACTION:DELETE_SUB]
+{"name":"${nameMatch[1].trim()}"}
+[/ACTION]
+
+I'll cancel that subscription for you.`;
+    }
+  }
+
+  // Handle transaction add
   if (lower.includes("add") && (lower.includes("transaction") || lower.includes("expense") || lower.includes("income"))) {
     const amountMatch = message.match(/(\d+(?:,\d{3})*(?:\.\d{2})?)/);
     const amount = amountMatch ? parseFloat(amountMatch[1].replace(/,/g, "")) : 0;
@@ -499,8 +581,8 @@ I'll add that ${type.toLowerCase()} for you: ${description} - ৳${amount.toLoca
     }
   }
 
-  // Handle transaction delete requests
-  if (lower.includes("delete") || lower.includes("remove")) {
+  // Handle transaction delete
+  if ((lower.includes("delete") || lower.includes("remove")) && !lower.includes("subscription")) {
     const descMatch = message.match(/(?:delete|remove)\s+(.+?)(?:\s+transaction|$)/i);
     if (descMatch) {
       return `[ACTION:DELETE]
@@ -521,7 +603,7 @@ I'll remove that transaction for you.`;
     return `You're saving ${savingsRate}% this month. ${savingsRate >= 20 ? "Excellent!" : `To reach 20%, save ৳${Math.round(data.monthlyIncome * 0.2 - data.monthlyExpense).toLocaleString()} more.`}`;
   }
   if (lower.includes("subscription")) {
-    return `You have ${data.subscriptionCount} active subscriptions. Check the Subscriptions page for details.`;
+    return `You have ${data.subscriptionCount} active subscriptions. Say "add subscription" to add a new one, or "cancel subscription [name]" to remove one.`;
   }
   return `Your balance: ৳${data.totalBalance.toLocaleString()}. Monthly: +৳${data.monthlyIncome.toLocaleString()} / -৳${data.monthlyExpense.toLocaleString()}. Savings rate: ${savingsRate}%.`;
 }
