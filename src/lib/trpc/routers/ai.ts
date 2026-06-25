@@ -202,6 +202,7 @@ export const aiRouter = router({
         }
 
         const model = preferredModel && provider.id === preferredProvider ? preferredModel : provider.defaultModel;
+        console.log(`[AI Chat] Trying ${provider.id} with model ${model}, key starts with: ${apiKey.substring(0, 8)}...`);
 
         try {
           let content = "";
@@ -252,11 +253,20 @@ export const aiRouter = router({
             });
             if (!res.ok) {
               const errBody = await res.text();
-              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 100)}`);
+              errors.push(`${provider.id}: ${res.status} - ${errBody.substring(0, 200)}`);
               continue;
             }
             const data = await res.json();
+            // Debug: log full response structure
             content = data.choices?.[0]?.message?.content || "";
+            if (!content && data.error) {
+              errors.push(`${provider.id}: API error - ${JSON.stringify(data.error).substring(0, 200)}`);
+              continue;
+            }
+            if (!content && !data.choices?.length) {
+              errors.push(`${provider.id}: no choices in response - ${JSON.stringify(data).substring(0, 200)}`);
+              continue;
+            }
           }
 
           if (content) {
