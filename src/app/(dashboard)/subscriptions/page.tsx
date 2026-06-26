@@ -82,18 +82,18 @@ export default function SubscriptionsPage() {
   }, [newSub.website]);
 
   const utils = trpc.useUtils();
-  const { data: subscriptions, isLoading } = trpc.subscription?.list?.useQuery(
+  const { data: subscriptions, isLoading } = trpc.subscription.list.useQuery(
     { status: filter as any }
   ) ?? { data: null, isLoading: false };
 
-  const { data: summary } = trpc.subscription?.summary?.useQuery() ?? {
+  const { data: summary } = trpc.subscription.summary.useQuery() ?? {
     data: null,
   };
 
-  const createSub = trpc.subscription?.create?.useMutation({
+  const createSub = trpc.subscription.create.useMutation({
     onSuccess: () => {
-      utils.subscription?.list?.invalidate();
-      utils.subscription?.summary?.invalidate();
+      utils.subscription.list.invalidate();
+      utils.subscription.summary.invalidate();
       setIsAddDialogOpen(false);
       setNewSub({
         name: "",
@@ -109,10 +109,10 @@ export default function SubscriptionsPage() {
     },
   });
 
-  const cancelSub = trpc.subscription?.cancel?.useMutation({
+  const cancelSub = trpc.subscription.cancel.useMutation({
     onSuccess: () => {
-      utils.subscription?.list?.invalidate();
-      utils.subscription?.summary?.invalidate();
+      utils.subscription.list.invalidate();
+      utils.subscription.summary.invalidate();
     },
   });
 
