@@ -9,6 +9,7 @@ import { budgetRouter } from "./budget";
 import { aiRouter } from "./ai";
 import { parserRouter } from "./parser";
 import { aiSettingsRouter } from "./ai-settings";
+import { userRouter } from "./user";
 
 export const appRouter = router({
   account: accountRouter,
@@ -21,6 +22,7 @@ export const appRouter = router({
   ai: aiRouter,
   parser: parserRouter,
   aiSettings: aiSettingsRouter,
+  user: userRouter,
 });
 
 export type AppRouter = typeof appRouter;
