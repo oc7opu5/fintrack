@@ -15,6 +15,9 @@ import {
   LogOut,
   Bot,
   Sparkles,
+  Notebook,
+  Lightbulb,
+  DollarSign,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -22,12 +25,15 @@ import { Button } from "@/components/ui/button";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Transactions", href: "/transactions", icon: ArrowLeftRight },
+  { name: "AI Journal", href: "/journal", icon: Notebook },
   { name: "Accounts", href: "/accounts", icon: Wallet },
+  { name: "Debt Tracker", href: "/debt", icon: DollarSign },
   { name: "Credit Cards", href: "/credit-cards", icon: CreditCard },
   { name: "Subscriptions", href: "/subscriptions", icon: RefreshCw },
   { name: "Budget", href: "/budget", icon: PieChart },
+  { name: "AI Insights", href: "/insights", icon: Lightbulb },
   { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "AI Assistant", href: "/chat", icon: Bot },
+  { name: "AI Chat", href: "/chat", icon: Bot },
   { name: "AI Settings", href: "/settings/ai", icon: Sparkles },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
@@ -39,7 +45,7 @@ export function Sidebar() {
     <div className="hidden lg:flex lg:flex-col lg:w-64 lg:border-r bg-card">
       <div className="flex items-center gap-2 p-6 border-b">
         <Wallet className="w-8 h-8 text-primary" />
-        <span className="text-xl font-bold">FinTrack</span>
+        <span className="text-xl font-bold">MindLedger</span>
       </div>
       <nav className="flex-1 p-4 space-y-1">
         {navigation.map((item) => {

@@ -45,7 +45,7 @@ export const userRouter = router({
         orderBy: { date: "desc" },
       }),
       ctx.db.subscription.findMany({ where: { userId: ctx.session.user.id }, select: { name: true, amount: true, billingCycle: true, status: true, nextBillingDate: true } }),
-      ctx.db.budget.findMany({ where: { userId: ctx.session.user.id }, include: { category: true }, select: { name: true, amount: true, spent: true, period: true } }),
+      ctx.db.budget.findMany({ where: { userId: ctx.session.user.id }, select: { name: true, amount: true, spent: true, period: true, category: { select: { name: true } } } }),
     ]);
 
     return { accounts, transactions, subscriptions, budgets };

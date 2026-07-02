@@ -36,6 +36,10 @@ import {
   X,
   Image,
   FileText,
+  Brain,
+  Scale,
+  MessageSquare,
+  Lightbulb,
 } from "lucide-react";
 
 interface Message {
@@ -64,6 +68,7 @@ export default function ChatPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
+  const [chatMode, setChatMode] = useState<"coach" | "debt_manager" | "analyst">("coach");
   const [aiOnlyMode, setAiOnlyMode] = useState<boolean>(true);
   const [attachedFiles, setAttachedFiles] = useState<{ name: string; type: string; content: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -167,7 +172,7 @@ export default function ChatPage() {
     setAttachedFiles([]);
 
     chatMutation.mutate(
-      { message: fullMessage },
+      { message: fullMessage, mode: chatMode },
       {
         onSuccess: (result) => {
           setMessages((prev) => [...prev, {
@@ -233,6 +238,33 @@ export default function ChatPage() {
             <Bot className="w-6 h-6" />
             AI Assistant
           </h1>
+          {/* Mode Selector */}
+          <div className="flex gap-1 mt-2">
+            <Button
+              variant={chatMode === "coach" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setChatMode("coach")}
+              className="gap-1"
+            >
+              <MessageSquare className="w-3 h-3" /> Coach
+            </Button>
+            <Button
+              variant={chatMode === "debt_manager" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setChatMode("debt_manager")}
+              className="gap-1"
+            >
+              <Scale className="w-3 h-3" /> Debt Manager
+            </Button>
+            <Button
+              variant={chatMode === "analyst" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setChatMode("analyst")}
+              className="gap-1"
+            >
+              <Lightbulb className="w-3 h-3" /> Analyst
+            </Button>
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {Object.keys(availableProviders).length > 0 && (
@@ -285,8 +317,20 @@ export default function ChatPage() {
                 <Bot className="w-8 h-8 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold">Hi! I'm your AI financial assistant</h2>
-                <p className="text-muted-foreground mt-1">Ask me anything about your finances.</p>
+                <h2 className="text-xl font-semibold">
+                  {chatMode === "coach"
+                    ? "I'm your Financial Coach"
+                    : chatMode === "debt_manager"
+                    ? "I'm your Debt Manager"
+                    : "I'm your Financial Analyst"}
+                </h2>
+                <p className="text-muted-foreground mt-1">
+                  {chatMode === "coach"
+                    ? "Ask me about budgeting, saving tips, or spending habits."
+                    : chatMode === "debt_manager"
+                    ? "Ask me about credit cards, loans, EMI planning, or debt strategies."
+                    : "Ask me about spending patterns, trends, or financial health analysis."}
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-2 max-w-md">
                 {SUGGESTIONS.map((s) => (

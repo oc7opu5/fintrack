@@ -10,6 +10,10 @@ import { aiRouter } from "./ai";
 import { parserRouter } from "./parser";
 import { aiSettingsRouter } from "./ai-settings";
 import { userRouter } from "./user";
+import { currencyRouter } from "./currency";
+import { debtRouter } from "./debt";
+import { journalRouter } from "./journal";
+import { insightRouter } from "./insight";
 
 export const appRouter = router({
   account: accountRouter,
@@ -23,6 +27,10 @@ export const appRouter = router({
   parser: parserRouter,
   aiSettings: aiSettingsRouter,
   user: userRouter,
+  currency: currencyRouter,
+  debt: debtRouter,
+  journal: journalRouter,
+  insight: insightRouter,
 });
 
 export type AppRouter = typeof appRouter;

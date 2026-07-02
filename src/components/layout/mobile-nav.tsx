@@ -6,16 +6,16 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   ArrowLeftRight,
-  Wallet,
-  CreditCard,
+  Notebook,
+  Bot,
   MoreHorizontal,
 } from "lucide-react";
 
 const mainNav = [
   { name: "Home", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Transactions", href: "/transactions", icon: ArrowLeftRight },
-  { name: "Add", href: "/transactions/new", icon: Wallet, isAction: true },
-  { name: "Cards", href: "/credit-cards", icon: CreditCard },
+  { name: "Journal", href: "/journal", icon: Notebook },
+  { name: "Add", href: "/transactions/new", icon: ArrowLeftRight, isAction: true },
+  { name: "AI Chat", href: "/chat", icon: Bot },
   { name: "More", href: "/more", icon: MoreHorizontal },
 ];
 

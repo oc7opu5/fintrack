@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { DEFAULT_CURRENCIES } from "../src/lib/currency";
 
 const prisma = new PrismaClient();
 
@@ -229,6 +230,16 @@ async function main() {
   });
 
   console.log("Created demo subscription");
+
+  // Seed currencies
+  for (const c of DEFAULT_CURRENCIES) {
+    await prisma.currency.upsert({
+      where: { code: c.code },
+      create: { code: c.code, name: c.name, symbol: c.symbol, rateToBase: c.rateToBase, isBase: c.isBase },
+      update: {},
+    });
+  }
+  console.log("Seeded currencies: BDT, USD, CAD");
 
   console.log("Seeding complete!");
   console.log("\nDemo credentials:");

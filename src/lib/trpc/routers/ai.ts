@@ -7,6 +7,8 @@ import {
   truncateContext,
   FINANCIAL_ASSISTANT_SYSTEM_PROMPT,
 } from "@/lib/ai/service";
+import { getModeSystemPrompt, DEFAULT_TASK_ROUTING } from "@/lib/ai/router";
+import { calculateReducingBalance, calculateStaticBalance, calculateCreditCardDues, formatDebtOutput } from "@/lib/debt-engine";
 
 // Parse action blocks from AI response
 function parseActions(response: string): { cleanResponse: string; actions: Array<{ type: string; data: any }> } {
@@ -241,15 +243,18 @@ export const aiRouter = router({
     };
   }),
 
-  // Chat with AI
+  // Chat with AI - supports 3 modes: coach, debt_manager, analyst
   chat: protectedProcedure
-    .input(z.object({ message: z.string().min(1) }))
+    .input(z.object({
+      message: z.string().min(1),
+      mode: z.enum(["coach", "debt_manager", "analyst"]).default("coach"),
+    }))
     .mutation(async ({ ctx, input }) => {
       const startTime = Date.now();
 
-      // Save user message
+      // Save user message with mode
       await ctx.db.chatMessage.create({
-        data: { userId: ctx.session.user.id, role: "user", content: input.message },
+        data: { userId: ctx.session.user.id, role: "user", content: input.message, mode: input.mode },
       });
 
       // Get conversation history
@@ -312,7 +317,10 @@ export const aiRouter = router({
         previousMonthExpense: Number(lastMonth._sum.amount || 0),
       }));
 
+      const modeSystemPrompt = getModeSystemPrompt(input.mode);
       const messages = buildChatMessages(input.message, financialContext, conversationHistory);
+      // Override system prompt with mode-specific one
+      messages[0] = { role: "system", content: modeSystemPrompt };
 
       // Get API keys from settings
       const aiSettings = await ctx.db.aISettings.findUnique({ where: { userId: ctx.session.user.id } });
@@ -361,7 +369,7 @@ export const aiRouter = router({
               body: JSON.stringify({
                 model,
                 max_tokens: 1024,
-                system: FINANCIAL_ASSISTANT_SYSTEM_PROMPT,
+                system: modeSystemPrompt,
                 messages: messages.filter((m) => m.role !== "system").map((m) => ({ role: m.role, content: m.content })),
               }),
             });
@@ -430,7 +438,7 @@ export const aiRouter = router({
             }
 
             await ctx.db.chatMessage.create({
-              data: { userId: ctx.session.user.id, role: "assistant", content: finalResponse, provider: provider.id, model },
+              data: { userId: ctx.session.user.id, role: "assistant", content: finalResponse, provider: provider.id, model, mode: input.mode },
             });
 
             return {
@@ -492,7 +500,7 @@ export const aiRouter = router({
       }
 
       await ctx.db.chatMessage.create({
-        data: { userId: ctx.session.user.id, role: "assistant", content: finalLocalResponse, provider: "local", model: "fallback" },
+        data: { userId: ctx.session.user.id, role: "assistant", content: finalLocalResponse, provider: "local", model: "fallback", mode: input.mode },
       });
 
       return {

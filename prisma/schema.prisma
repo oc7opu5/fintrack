@@ -77,6 +77,10 @@ model User {
   aiParseLogs     AIParseLog[]
   aiSettings      AISettings?
   chatMessages    ChatMessage[]
+  aiTaskConfigs   AITaskConfig[]
+  journalEntries  JournalEntry[]
+  insights        Insight[]
+  debts           Debt[]
 
   @@map("users")
 }
@@ -149,6 +153,7 @@ model Transaction {
   categoryId     String?
   type           TransactionType
   amount         Decimal         @db.Decimal(15, 2)
+  currency       String          @default("BDT")
   description    String
   note           String?
   date           DateTime        @default(now())
@@ -376,10 +381,150 @@ model ChatMessage {
   provider  String?
   model     String?
   tokens    Int?
+  mode      String?  // "coach" | "debt_manager" | "analyst"
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@map("chat_messages")
+}
+
+// Multi-currency support
+model Currency {
+  id          String   @id @default(cuid())
+  code        String   @unique // "BDT", "USD", "CAD"
+  name        String   // "Bangladeshi Taka", "US Dollar", etc.
+  symbol      String   @default("৳") // "$", "৳", "C$"
+  rateToBase  Decimal  @db.Decimal(15, 6) // 1 unit of this currency = X in base (BDT)
+  isBase      Boolean  @default(false) // BDT is base
+  lastUpdated DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@map("currencies")
+}
+
+// AI router task configuration per user
+model AITaskConfig {
+  id          String   @id @default(cuid())
+  userId      String
+  taskType    String   // "parser" | "chat" | "insight" | "debt_analysis"
+  provider    String   // "openai" | "openrouter" | "custom" | "opencode-zen" | etc.
+  model       String   // "gpt-4.1" | "claude-3" | etc.
+  temperature Decimal? @default(0.7) @db.Decimal(3, 2)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, taskType])
+  @@map("ai_task_configs")
+}
+
+// AI Journal Entry - free-form text with AI extraction
+model JournalEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  rawText     String   // The free-form journal text
+  extractedTxs Json?    // AI-extracted transactions array
+  summary     String?  // AI-generated summary
+  sentiment   String?  // "positive" | "neutral" | "negative"
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("journal_entries")
+}
+
+// AI-generated insights
+model Insight {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // "spending_pattern" | "risk_alert" | "savings_tip" | "debt_stress" | "financial_health"
+  title       String
+  content     String
+  severity    String   @default("info") // "info" | "warning" | "critical"
+  metadata    Json?    // scores, percentages, related data
+  isRead      Boolean  @default(false)
+  provider    String?
+  model       String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, createdAt])
+  @@index([userId, isRead])
+  @@map("insights")
+}
+
+// Enhanced debt model - supports credit cards, personal loans, informal debt
+model Debt {
+  id                String     @id @default(cuid())
+  userId            String
+  name              String     // "Visa Card" | "Personal Loan" | "Owed to Rahim"
+  type              String     // "credit_card" | "personal_loan" | "installment" | "informal"
+  calculationMode   String     @default("reducing_balance") // "reducing_balance" | "static"
+  principalAmount   Decimal    @db.Decimal(15, 2)
+  outstandingAmount Decimal    @db.Decimal(15, 2)
+  interestRate      Decimal    @default(0) @db.Decimal(5, 2)
+  tenure          Int?        // number of months/periods (null for revolving credit)
+  fixedEMI        Decimal?    @db.Decimal(15, 2) // for static mode
+  monthlyDue      Decimal?    @db.Decimal(15, 2) // calculated monthly due
+  interestPortion Decimal?    @db.Decimal(15, 2) // interest portion of current payment
+  startDate         DateTime
+  endDate           DateTime?
+  dueDay            Int?        // day of month for due date
+  creditLimit       Decimal?    @db.Decimal(15, 2) // for credit cards
+  lastFourDigits    String?
+  lenderName        String?     // for informal/personal loans: "Friend", "Bank", etc.
+  color             String?
+  status            LoanStatus  @default(ACTIVE)
+  notes             String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  installments DebtInstallment[]
+  payments     DebtPayment[]
+
+  @@index([userId, type, status])
+  @@map("debts")
+}
+
+model DebtInstallment {
+  id               String   @id @default(cuid())
+  debtId           String
+  installmentNo    Int
+  principalPortion Decimal  @db.Decimal(15, 2)
+  interestPortion  Decimal  @db.Decimal(15, 2)
+  totalPayment     Decimal  @db.Decimal(15, 2)
+  outstandingAfter Decimal  @db.Decimal(15, 2)
+  dueDate          DateTime
+  paidDate         DateTime?
+  status           String   @default("PENDING")
+  createdAt        DateTime @default(now())
+
+  debt Debt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+
+  @@unique([debtId, installmentNo])
+  @@index([debtId, status])
+  @@map("debt_installments")
+}
+
+model DebtPayment {
+  id          String   @id @default(cuid())
+  debtId      String
+  amount      Decimal  @db.Decimal(15, 2)
+  paymentDate DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  debt Debt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+
+  @@index([debtId, paymentDate])
+  @@map("debt_payments")
 }
