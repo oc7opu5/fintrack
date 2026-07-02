@@ -1,8 +1,6 @@
-import { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
+const config = {
   appId: 'app.fintrack.mobile',
-  appName: 'FinTrack',
+  appName: 'MindLedger',
   webDir: '.next',
   server: {
     androidScheme: 'https',
